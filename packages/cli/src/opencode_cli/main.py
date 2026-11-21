@@ -11,6 +11,7 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any, NoReturn
 
+from opencode_core.detection import DetectorConfig
 from opencode_core.engine import analyze_directory, compare_files, find_clones
 from opencode_core.version import (
     FINGERPRINT_VERSION,
@@ -36,10 +37,15 @@ def _parser() -> argparse.ArgumentParser:
     scan.add_argument("path", type=Path)
     _common_scan_options(scan)
 
-    clones = subparsers.add_parser("find-clones", help="find verified clones in a directory")
+    clones = subparsers.add_parser("find-clones", help="find clone evidence in a directory")
     clones.add_argument("path", type=Path)
-    clones.add_argument("--type", default="1,2", help="comma-separated clone types (1,2)")
+    clones.add_argument("--type", default="1,2", help="comma-separated clone types (1,2,3,4)")
     clones.add_argument("--min-tokens", type=int, default=28)
+    clones.add_argument(
+        "--verify-semantic",
+        action="store_true",
+        help="enable conservative CFG and def-use promotion for Type 4 candidates",
+    )
     clones.add_argument("--format", choices=("text", "json", "sarif"), default="text")
     clones.add_argument("--exclude", action="append", default=[])
     clones.add_argument("--json", action="store_true")
@@ -190,7 +196,15 @@ def _run(args: argparse.Namespace) -> int:
         if not set(selected) <= {"type1", "type2", "type3", "type4"}:
             _fail("clone types must be selected from 1, 2, 3, and 4", EXIT_USAGE)
         started = time.perf_counter()
-        matches = find_clones(workspace, selected, args.min_tokens)
+        matches = find_clones(
+            workspace,
+            selected,
+            args.min_tokens,
+            DetectorConfig(
+                minimum_tokens=args.min_tokens,
+                semantic_verification=args.verify_semantic,
+            ),
+        )
         elapsed = scan_elapsed + time.perf_counter() - started
         summary["matches"] = _serialized_matches(matches)
         summary["matchCount"] = len(matches)

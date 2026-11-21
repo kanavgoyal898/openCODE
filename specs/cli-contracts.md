@@ -5,7 +5,7 @@ Executable name: `opencode`. Commands never execute analyzed source. Diagnostics
 | Command | Core options | Result |
 |---|---|---|
 | `scan PATH` | `--language`, `--mode`, `--exclude`, `--strict`, `--json` | ingestion/fingerprint summary and scan ID |
-| `find-clones PATH` | `--type 1,2,3,4`, `--evidence-state`, `--min-tokens`, `--format text|json|sarif` | ordered clone groups/candidates with evidence |
+| `find-clones PATH` | `--type 1,2,3,4`, `--verify-semantic`, `--min-tokens`, `--format text|json|sarif` | ordered clone groups/candidates with evidence; semantic promotion is opt-in |
 | `compare FILE1 FILE2` | `--mode`, `--json` | verified spans and separate scores |
 | `stats PATH` | `--json` | files, tokens, fingerprints, stop-fingerprints, skips |
 | `benchmark [CORPUS]` | `--seed`, `--runs`, `--json`, `--output` | environment plus observed metrics |

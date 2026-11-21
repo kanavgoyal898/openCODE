@@ -4,7 +4,11 @@ from pathlib import Path
 
 from opencode_core.detection import CloneDetector, DetectorConfig
 from opencode_core.engine import AnalysisWorkspace, analyze_directory, find_clones
-from opencode_core.semantic import HashCodeEmbeddingModel, SemanticCloneDetector
+from opencode_core.semantic import (
+    BehavioralSandbox,
+    HashCodeEmbeddingModel,
+    SemanticCloneDetector,
+)
 
 LOOP = """def sum_values(numbers):
     total = 0
@@ -73,3 +77,63 @@ def test_embedding_truncation_is_disclosed(tmp_path: Path) -> None:
     assert any(
         "EMBEDDING_INPUT_TRUNCATED" in item.limitations for item in detector.detect("loop.py")
     )
+
+
+def test_multi_evidence_policy_promotes_cross_language_candidate(tmp_path: Path) -> None:
+    (tmp_path / "sum.py").write_text(LOOP)
+    (tmp_path / "sum.js").write_text(
+        "function sumValues(numbers) {\n"
+        "  let total = 0;\n"
+        "  for (const number of numbers) { total = total + number; }\n"
+        "  return total;\n}\n"
+    )
+    workspace = analyze_directory(tmp_path)
+    detector = SemanticCloneDetector(
+        workspace.store,
+        workspace.records,
+        DetectorConfig(semantic_verification=True),
+    )
+
+    result = detector.detect("sum.py")[0]
+
+    assert result.evidence_state == "verified"
+    assert result.algorithm_version.startswith("semantic-v2:")
+    assert result.scores.cfg_similarity == 1
+    assert result.scores.data_flow_similarity == 1
+    assert "PDG_FEATURE_AGREEMENT" in result.evidence.explanation_codes
+    assert "EMBEDDING_SIMILARITY_IS_NOT_SEMANTIC_EQUIVALENCE" in result.limitations
+
+
+def test_unsupported_dynamic_construct_stays_candidate(tmp_path: Path) -> None:
+    (tmp_path / "left.py").write_text("def calculate(text):\n    return eval(text)\n")
+    (tmp_path / "right.py").write_text("def calculate(code):\n    return eval(code)\n")
+    workspace = analyze_directory(tmp_path)
+    detector = SemanticCloneDetector(
+        workspace.store,
+        workspace.records,
+        DetectorConfig(semantic_threshold=0, semantic_verification=True),
+    )
+
+    result = detector.detect("left.py")[0]
+
+    assert result.evidence_state == "candidate"
+    assert "UNSUPPORTED_DYNAMIC_OR_IO_CONSTRUCT" in result.limitations
+
+
+def test_behavioral_sandbox_requires_authorization_and_isolation() -> None:
+    assert BehavioralSandbox().run_approved_harness("print(1)").status == "disabled"
+    assert (
+        BehavioralSandbox(enabled=True).run_approved_harness("print(1)").status
+        == "isolation_required"
+    )
+
+
+def test_behavioral_sandbox_bounds_approved_harness() -> None:
+    sandbox = BehavioralSandbox(enabled=True, network_isolated=True, timeout_seconds=0.1)
+    completed = sandbox.run_approved_harness("print('domain-ok')")
+    assert (completed.status, completed.exit_code, completed.stdout.strip()) == (
+        "completed",
+        0,
+        "domain-ok",
+    )
+    assert sandbox.run_approved_harness("while True: pass").status == "timeout"

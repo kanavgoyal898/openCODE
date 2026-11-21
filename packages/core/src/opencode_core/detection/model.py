@@ -19,6 +19,8 @@ class DetectorConfig:
     retrieval_budget: int = 100
     semantic_threshold: float = 0.28
     semantic_top_k: int = 20
+    semantic_verification: bool = False
+    program_analysis_threshold: float = 0.70
 
     def __post_init__(self) -> None:
         if (
@@ -30,6 +32,7 @@ class DetectorConfig:
             or self.retrieval_budget <= 0
             or not 0 <= self.semantic_threshold <= 1
             or self.semantic_top_k <= 0
+            or not 0 <= self.program_analysis_threshold <= 1
         ):
             raise ValueError("detector thresholds must be non-negative")
 
@@ -56,6 +59,9 @@ class SimilarityScores:
     structural_similarity: float | None = None
     aligned_token_similarity: float | None = None
     embedding_cosine: float | None = None
+    cfg_similarity: float | None = None
+    data_flow_similarity: float | None = None
+    pdg_similarity: float | None = None
     confidence: None = None
 
 

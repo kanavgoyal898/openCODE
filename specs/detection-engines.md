@@ -45,6 +45,8 @@ Evidence identifies added/removed/modified/moved nodes, aligned token ranges, st
 
 `semantic-v2` may promote a candidate to `verified` only when an approved evidence policy supplies at least two independent non-embedding signals, including control/data-flow or program-dependence similarity. Optional behavioral comparison is disabled by default, runs only with explicit authorization inside a no-network, resource-limited sandbox, uses generated/approved inputs, and records coverage and observable outputs. Passing tests supports only the tested input domain.
 
+The implemented `semantic-v2` policy requires CFG-shape and normalized def-use similarity independently, plus a corroborating combined PDG-style feature score; every score must meet the configured threshold (default 0.70). Empty feature sets score zero rather than agreement. The PDG-style representation is a bounded feature composition, not a complete formal PDG. Dynamic evaluation, reflection, process/network/file I/O, and recognized unsupported constructs prevent promotion. CLI `--verify-semantic` and API/worker mode `semantic-verified` are the only promotion switches; neither enables behavioral execution.
+
 No engine may claim universal program equivalence. Native code, dynamic evaluation, reflection, external I/O, nondeterminism, or unsupported constructs force candidate-only or rejected status.
 
 ## Aggregation and metrics

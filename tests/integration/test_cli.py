@@ -145,3 +145,33 @@ def test_find_clones_supports_structural_mode(
     assert main(["find-clones", str(root), "--type", "3", "--format", "json"]) == 0
     report = json.loads(capsys.readouterr().out)
     assert report["result"]["matches"][0]["category"] == "type3"
+
+
+def test_find_clones_supports_verified_semantic_mode(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root = tmp_path / "semantic"
+    root.mkdir()
+    corpus = Path("tests/benchmarks/corpus/m14-verified-v1")
+    (root / "sum.py").write_text((corpus / "sum.py").read_text())
+    (root / "sum.js").write_text((corpus / "sum.js").read_text())
+
+    assert (
+        main(
+            [
+                "find-clones",
+                str(root),
+                "--type",
+                "4",
+                "--verify-semantic",
+                "--format",
+                "json",
+            ]
+        )
+        == 0
+    )
+    report = json.loads(capsys.readouterr().out)
+    match = report["result"]["matches"][0]
+    assert match["category"] == "type4"
+    assert match["evidence_state"] == "verified"
+    assert match["algorithm_version"].startswith("semantic-v2:")

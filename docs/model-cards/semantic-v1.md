@@ -8,7 +8,7 @@ This is not a pretrained neural model. The `CodeEmbeddingModel` port is intentio
 
 ## Intended use and claim boundary
 
-The vector index retrieves speculative candidates through cosine similarity. Every `semantic-v1` result is `candidate`, never `verified`, and states that embedding similarity is not semantic equivalence or plagiarism proof. It is intended to prioritize review and to validate the model/index contract before M14 multi-evidence verification.
+The vector index retrieves speculative candidates through cosine similarity. Every `semantic-v1` result is `candidate`, never `verified`, and states that embedding similarity is not semantic equivalence or plagiarism proof. M14 can pass such a candidate to the separate [semantic-v2 evidence policy](semantic-v2.md); retrieval itself never promotes a result.
 
 ## Inputs and truncation
 

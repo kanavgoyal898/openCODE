@@ -17,7 +17,7 @@ Base path `/api/v1`; JSON is UTF-8. Authentication is bearer/OIDC in hosted mode
 
 ```typescript
 type RepositoryCreate = {name: string; localPath?: string; remote?: {url: string; credentialRef?: string}; revision?: string};
-type ScanCreate = {repositoryId: string; modes?: ("exact"|"renamed")[]; strict?: boolean};
+type ScanCreate = {repositoryId: string; modes?: ("exact"|"renamed"|"structural"|"semantic"|"semantic-verified")[]; strict?: boolean};
 type Scan = {id: string; repositoryId: string; status: "queued"|"running"|"completed"|"partial"|"failed"|"cancelled";
   algorithmVersion: "fp-v1"; normalizationVersion: "norm-v1"; counts: Record<string,number>; createdAt: string; completedAt?: string};
 type SearchRequest = {repositoryIds: string[]; code: string; language: "python"|"javascript"|"typescript"|"java";
@@ -37,3 +37,5 @@ type Page<T> = {items: T[]; nextCursor: string|null};
 Local paths are permitted only for the trusted single-user deployment and must be server-allowlisted. Remote credentials are references, never returned. Cursors are opaque, signed, and bind filters/order. Default order is creation time then ID. Unknown fields are rejected on writes. OpenAPI 3.1 generated from these schemas must pass lint and contract tests.
 
 Type 4 embedding-only results must use `evidenceState="candidate"`. APIs must not expose a verified semantic result unless its evidence satisfies the approved multi-evidence policy in [detection-engines.md](detection-engines.md).
+
+`semantic` selects candidate-only `semantic-v1`. `semantic-verified` explicitly enables the `semantic-v2` static promotion policy; it does not enable behavioral execution. Unsupported constructs remain candidate-only in either mode.

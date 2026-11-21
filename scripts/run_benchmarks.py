@@ -23,6 +23,7 @@ def main() -> None:
     parser.add_argument("--warmups", type=int, default=1)
     parser.add_argument("--seed", type=int, default=20261122)
     parser.add_argument("--categories", default="type1,type2")
+    parser.add_argument("--semantic-verification", action="store_true")
     args = parser.parse_args()
     write_report(
         run_benchmark(
@@ -32,6 +33,7 @@ def main() -> None:
             warmups=args.warmups,
             seed=args.seed,
             categories=tuple(args.categories.split(",")),
+            semantic_verification=args.semantic_verification,
         ),
         args.output,
     )
