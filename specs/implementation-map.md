@@ -18,7 +18,7 @@ This map assigns approved requirement families to planned implementation boundar
 | REQ-SEC-*, REQ-OBS-* | ingestion settings/scanner, API middleware/admission, service containers and Compose | M11 | total-byte/request/active-scan bounds, default source suppression, safe request telemetry and headers, non-root read-only restricted containers, and internal backend network implemented |
 | REQ-ENG-*, REQ-RPT-* | detection model, lexical/structural engines, engine aggregation | M6/M12 | common interface/result schema, lexical and structural detectors, stable cross-engine deduplication implemented; semantic engine pending M13 |
 | REQ-T3-* | `opencode_core.structural`, AST node adapter output, CLI/API/worker integration | M12 | `struct-v1` MinHash/LSH retrieval, AST/token verification, conservative reorder evidence, and observed labeled evaluation implemented |
-| REQ-T4-* | `packages/core/src/opencode_core/semantic/` | M13/M14 | planned experimental retrieval then multi-evidence verification |
-| REQ-EVL-* | `tests/benchmarks/`, versioned evaluation manifests | M10/M12/M13/M14 | planned per-category evaluation |
+| REQ-T4-* | `opencode_core.semantic`, model card, CLI/API/worker integration | M13/M14 | M13 pinned embedding provider/baseline, vector retrieval, candidate-only evidence and evaluation implemented; M14 multi-evidence verification pending |
+| REQ-EVL-* | `tests/benchmarks/`, versioned evaluation manifests | M10/M12/M13/M14 | separate observed Type 1/2, Type 3, and Type 4 candidate reports implemented; M14 verified-semantic report pending |
 
 M0 owns `pyproject.toml`, configuration/version primitives, CI, validation scripts, and package/test boundaries. It implements no functional `REQ-*`; its acceptance is the reproducible build skeleton required by [the roadmap](../docs/18-implementation-roadmap.md).

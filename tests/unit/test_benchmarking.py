@@ -44,3 +44,16 @@ def test_structural_evaluation_reports_separate_metrics() -> None:
     )
     assert report["metricsByCategory"]["type3"]["precision"] == 1
     assert report["metricsByCategory"]["type3"]["recall"] == 1
+
+
+def test_semantic_evaluation_is_candidate_only() -> None:
+    corpus = Path("tests/benchmarks/corpus/m13-semantic-v1")
+    report = run_benchmark(
+        corpus,
+        corpus / "manifest.json",
+        repetitions=1,
+        warmups=0,
+        categories=("type4",),
+    )
+    assert report["metricsByCategory"]["type4Candidate"]["recall"] == 1
+    assert report["metricsByCategory"]["type4Verified"]["observed"] is False

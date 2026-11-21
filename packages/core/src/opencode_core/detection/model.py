@@ -17,6 +17,8 @@ class DetectorConfig:
     alignment_threshold: float = 0.65
     minimum_matched_statements: int = 3
     retrieval_budget: int = 100
+    semantic_threshold: float = 0.28
+    semantic_top_k: int = 20
 
     def __post_init__(self) -> None:
         if (
@@ -26,6 +28,8 @@ class DetectorConfig:
             or not 0 <= self.alignment_threshold <= 1
             or self.minimum_matched_statements <= 0
             or self.retrieval_budget <= 0
+            or not 0 <= self.semantic_threshold <= 1
+            or self.semantic_top_k <= 0
         ):
             raise ValueError("detector thresholds must be non-negative")
 
@@ -51,6 +55,7 @@ class SimilarityScores:
     token_jaccard: float
     structural_similarity: float | None = None
     aligned_token_similarity: float | None = None
+    embedding_cosine: float | None = None
     confidence: None = None
 
 

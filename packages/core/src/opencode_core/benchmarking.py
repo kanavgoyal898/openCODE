@@ -101,7 +101,9 @@ def run_benchmark(
         )
     _, peak = tracemalloc.get_traced_memory()
     tracemalloc.stop()
-    metric_categories = tuple(kind for kind in ("type1", "type2", "type3") if kind in categories)
+    metric_categories = tuple(
+        kind for kind in ("type1", "type2", "type3", "type4") if kind in categories
+    )
     labels = {
         kind: {_pair(*pair) for pair in manifest["labels"].get(kind, [])}
         for kind in metric_categories
@@ -122,7 +124,7 @@ def run_benchmark(
         ).encode()
     )
     metrics: dict[str, Any] = {
-        kind: {
+        ("type4Candidate" if kind == "type4" else kind): {
             **_confusion(labels[kind], predicted[kind], universe),
             "candidateRecall": _confusion(labels[kind], predicted[kind], universe)["recall"],
         }
@@ -130,7 +132,8 @@ def run_benchmark(
     }
     if "type3" not in categories:
         metrics["type3"] = {"status": "not-implemented", "observed": False}
-    metrics["type4Candidate"] = {"status": "not-implemented", "observed": False}
+    if "type4" not in categories:
+        metrics["type4Candidate"] = {"status": "not-implemented", "observed": False}
     metrics["type4Verified"] = {"status": "not-implemented", "observed": False}
     throughput = statistics.median(kloc / value for value in scan_times)
     return {

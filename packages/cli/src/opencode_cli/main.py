@@ -187,8 +187,8 @@ def _run(args: argparse.Namespace) -> int:
     if args.command == "find-clones":
         workspace, summary, scan_elapsed = _scan_result(args.path, tuple(args.exclude))
         selected = tuple(f"type{value.strip()}" for value in args.type.split(","))
-        if not set(selected) <= {"type1", "type2", "type3"}:
-            _fail("only implemented clone types 1, 2, and 3 may be selected", EXIT_USAGE)
+        if not set(selected) <= {"type1", "type2", "type3", "type4"}:
+            _fail("clone types must be selected from 1, 2, 3, and 4", EXIT_USAGE)
         started = time.perf_counter()
         matches = find_clones(workspace, selected, args.min_tokens)
         elapsed = scan_elapsed + time.perf_counter() - started

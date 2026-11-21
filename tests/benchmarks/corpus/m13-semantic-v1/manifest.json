@@ -1,0 +1,18 @@
+{
+  "id": "m13-semantic-v1",
+  "license": "CC0-1.0 synthetic fixtures authored for openCODE",
+  "generator": "hand-authored semantic candidate and hard-negative pairs",
+  "seed": 20261122,
+  "files": [
+    {"path": "hard_negative.py", "sha256": "77572dbdd58c4705c327579b1078222e19bab3bab1d4999064e8399da8b53935"},
+    {"path": "sum_builtin.py", "sha256": "05cb4c3064ec642a5b855f62a72e2d5029e259cc83440854de2d3cd97ebf1b54"},
+    {"path": "sum_loop.py", "sha256": "0e6b8df8e4684f5ab559785fdb9344fca178bbb71293e8aa28205452b70c5944"},
+    {"path": "unrelated.py", "sha256": "72ee300af253c6b61eb5715e02822659a75b87242d7b029cf7098327ab010f37"}
+  ],
+  "labels": {"type4": [["sum_builtin.py", "sum_loop.py"]]},
+  "evaluatedPairs": [
+    ["sum_builtin.py", "sum_loop.py"],
+    ["sum_loop.py", "hard_negative.py"],
+    ["sum_loop.py", "unrelated.py"]
+  ]
+}

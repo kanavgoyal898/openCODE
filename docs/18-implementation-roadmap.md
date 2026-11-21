@@ -39,4 +39,5 @@ Acceptance for M0–M11 delivers the Phase 1 lexical product and supporting plat
 | M10 | complete | Versioned checksummed synthetic corpus; separate Type 1/2 confusion metrics; explicit later-engine states; five-run observed latency/throughput/memory report with environment and targets separated |
 | M11 | complete | Central API admission quotas/security headers/source-off policy/safe telemetry; repository total-byte quota; non-root read-only capability-dropped containers on internal backend network; adversarial tests and ADR-006 |
 | M12 | complete | `struct-v1` AST-node shingles, deterministic MinHash/LSH plus bounded recall top-up, AST/token alignment verification, conservative reorder evidence, CLI/API/worker integration, labeled corpus and observed Type 3 metrics |
-| M13–M14 | not started | Must proceed in dependency order; semantic phases require dedicated pull requests |
+| M13 | complete | `semantic-v1` pinned offline code-embedding baseline and provider port; separate exact-cosine vector retrieval; candidate-only evidence/limitations/truncation; hard-negative corpus, model card, observed metrics, CLI/API/worker integration |
+| M14 | not started | Multi-evidence semantic verification and optional sandbox remain |

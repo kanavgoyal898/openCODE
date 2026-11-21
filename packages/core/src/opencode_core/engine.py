@@ -22,6 +22,7 @@ from opencode_core.matching import (
 from opencode_core.normalization import normalize
 from opencode_core.parsers import Diagnostic, SourceScanner, default_registry
 from opencode_core.retrieval import CandidateRetriever
+from opencode_core.semantic import SemanticCloneDetector
 from opencode_core.structural import StructuralCloneDetector
 
 
@@ -124,6 +125,8 @@ def find_clones(
         detectors.append(TokenCloneDetector(retriever, workspace.store, config))
     if "type3" in categories:
         detectors.append(StructuralCloneDetector(workspace.store, workspace.records, config))
+    if "type4" in categories:
+        detectors.append(SemanticCloneDetector(workspace.store, workspace.records, config))
     unique: dict[tuple[object, ...], DetectionResult] = {}
     for record in workspace.records:
         for detector in detectors:

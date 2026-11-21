@@ -139,6 +139,7 @@ def _persist_workspace(session: Session, repository: RepositoryModel, scan: Scan
             ("exact", "type1"),
             ("renamed", "type2"),
             ("structural", "type3"),
+            ("semantic", "type4"),
         )
         if mode in scan.modes_json
     )
