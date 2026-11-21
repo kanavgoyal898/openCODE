@@ -53,13 +53,15 @@ class Deletion(ApiModel):
     status: Literal["accepted"] = "accepted"
 
 
-def _default_modes() -> list[Literal["exact", "renamed", "structural"]]:
+def _default_modes() -> list[Literal["exact", "renamed", "structural", "semantic"]]:
     return ["exact", "renamed"]
 
 
 class ScanCreate(ApiModel):
     repository_id: str
-    modes: list[Literal["exact", "renamed", "structural"]] = Field(default_factory=_default_modes)
+    modes: list[Literal["exact", "renamed", "structural", "semantic"]] = Field(
+        default_factory=_default_modes
+    )
     strict: bool = False
 
 

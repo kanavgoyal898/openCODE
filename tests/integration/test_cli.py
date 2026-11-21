@@ -110,7 +110,7 @@ def test_partial_strict_usage_and_input_exit_codes(
     capsys.readouterr()
 
     with pytest.raises(SystemExit) as invalid_type:
-        main(["find-clones", str(root), "--type", "4"])
+        main(["find-clones", str(root), "--type", "5"])
     assert invalid_type.value.code == 2
     with pytest.raises(SystemExit) as missing:
         main(["scan", str(tmp_path / "missing")])
