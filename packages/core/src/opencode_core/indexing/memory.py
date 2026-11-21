@@ -55,13 +55,18 @@ class InMemoryFingerprintIndex:
 
     def document_frequency(self, query: FingerprintQuery) -> int:
         with self._lock:
-            return len({posting.fragment_id for posting in self._postings.get(query.key, ())})
+            return len(
+                {
+                    (posting.repository_id, posting.revision_id, posting.fragment_id)
+                    for posting in self._postings.get(query.key, ())
+                }
+            )
 
     def fragment_count(self) -> int:
         with self._lock:
             return len(
                 {
-                    posting.fragment_id
+                    (posting.repository_id, posting.revision_id, posting.fragment_id)
                     for postings in self._postings.values()
                     for posting in postings
                 }
