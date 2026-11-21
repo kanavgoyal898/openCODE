@@ -13,9 +13,20 @@ EvidenceState = Literal["verified", "candidate", "rejected"]
 class DetectorConfig:
     minimum_tokens: int = 28
     merge_gap: int = 3
+    structural_threshold: float = 0.80
+    alignment_threshold: float = 0.65
+    minimum_matched_statements: int = 3
+    retrieval_budget: int = 100
 
     def __post_init__(self) -> None:
-        if self.minimum_tokens <= 0 or self.merge_gap < 0:
+        if (
+            self.minimum_tokens <= 0
+            or self.merge_gap < 0
+            or not 0 <= self.structural_threshold <= 1
+            or not 0 <= self.alignment_threshold <= 1
+            or self.minimum_matched_statements <= 0
+            or self.retrieval_budget <= 0
+        ):
             raise ValueError("detector thresholds must be non-negative")
 
 
@@ -38,6 +49,8 @@ class SimilarityScores:
     query_coverage: float
     candidate_coverage: float
     token_jaccard: float
+    structural_similarity: float | None = None
+    aligned_token_similarity: float | None = None
     confidence: None = None
 
 

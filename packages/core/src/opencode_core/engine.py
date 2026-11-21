@@ -22,6 +22,7 @@ from opencode_core.matching import (
 from opencode_core.normalization import normalize
 from opencode_core.parsers import Diagnostic, SourceScanner, default_registry
 from opencode_core.retrieval import CandidateRetriever
+from opencode_core.structural import StructuralCloneDetector
 
 
 @dataclass(frozen=True, slots=True)
@@ -62,6 +63,7 @@ def _record(
         renamed,
         fingerprint(exact, "exact"),
         fingerprint(renamed, "renamed"),
+        parsed.structural_nodes,
     )
 
 
@@ -120,6 +122,8 @@ def find_clones(
         detectors.append(ExactCloneDetector(retriever, workspace.store, config))
     if "type2" in categories:
         detectors.append(TokenCloneDetector(retriever, workspace.store, config))
+    if "type3" in categories:
+        detectors.append(StructuralCloneDetector(workspace.store, workspace.records, config))
     unique: dict[tuple[object, ...], DetectionResult] = {}
     for record in workspace.records:
         for detector in detectors:

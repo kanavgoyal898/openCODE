@@ -100,6 +100,8 @@ def _persist_workspace(session: Session, repository: RepositoryModel, scan: Scan
             "renamed": record.renamed_fingerprints,
         }
         for mode in scan.modes_json:
+            if mode not in fingerprint_sets:
+                continue
             fingerprint_set = fingerprint_sets[mode]
             for selected in fingerprint_set.fingerprints:
                 cache_key = (fingerprint_set.mode, selected.hash_u64)
@@ -133,7 +135,11 @@ def _persist_workspace(session: Session, repository: RepositoryModel, scan: Scan
 
     categories = tuple(
         category
-        for mode, category in (("exact", "type1"), ("renamed", "type2"))
+        for mode, category in (
+            ("exact", "type1"),
+            ("renamed", "type2"),
+            ("structural", "type3"),
+        )
         if mode in scan.modes_json
     )
     matches = find_clones(workspace, categories)

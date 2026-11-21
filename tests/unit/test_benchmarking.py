@@ -31,3 +31,16 @@ def test_checksum_and_protocol_validation(tmp_path: Path) -> None:
         run_benchmark(CORPUS, changed)
     with pytest.raises(ValueError, match="repetitions"):
         run_benchmark(CORPUS, CORPUS / "manifest.json", repetitions=0)
+
+
+def test_structural_evaluation_reports_separate_metrics() -> None:
+    corpus = Path("tests/benchmarks/corpus/m12-structural-v1")
+    report = run_benchmark(
+        corpus,
+        corpus / "manifest.json",
+        repetitions=1,
+        warmups=0,
+        categories=("type3",),
+    )
+    assert report["metricsByCategory"]["type3"]["precision"] == 1
+    assert report["metricsByCategory"]["type3"]["recall"] == 1

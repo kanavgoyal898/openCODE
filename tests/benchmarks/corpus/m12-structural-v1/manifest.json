@@ -1,0 +1,28 @@
+{
+  "id": "m12-structural-v1",
+  "license": "CC0-1.0 synthetic fixtures authored for openCODE",
+  "generator": "hand-authored Type 3 transformations",
+  "seed": 20261122,
+  "files": [
+    {"path": "base.py", "sha256": "8f072827d00f927cf1fd6cfcb0339881a163a821bb9a3dd34febb28c269d21bf"},
+    {"path": "dependent.py", "sha256": "2866a89dbc4abb0590a35f9c6ebb2c576f7f926d96adcd995f2648b9ffdd4c89"},
+    {"path": "insert_delete.py", "sha256": "6d586189f7c0efbdbbb3428d90334f6ac5b8dfa4abd0ffdc9cfe10daca1abd3b"},
+    {"path": "modified.py", "sha256": "6e5908a53d600747d7349755e35398caad7edd04d732d644d0f6818a3b49664d"},
+    {"path": "reordered.py", "sha256": "550c9eef6c4f5f0b0f34ef478ca16b8dd8e20420a57ad528a5245b9b8c39d0f9"},
+    {"path": "unrelated.py", "sha256": "099ad4ba8a91c28d59cc17d0c1c23a2c770d4060ed7b59d5f0bc57e6618923f0"}
+  ],
+  "labels": {
+    "type3": [
+      ["base.py", "insert_delete.py"],
+      ["base.py", "modified.py"],
+      ["base.py", "reordered.py"]
+    ]
+  },
+  "evaluatedPairs": [
+    ["base.py", "insert_delete.py"],
+    ["base.py", "modified.py"],
+    ["base.py", "reordered.py"],
+    ["base.py", "dependent.py"],
+    ["base.py", "unrelated.py"]
+  ]
+}

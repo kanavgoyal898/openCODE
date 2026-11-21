@@ -16,8 +16,8 @@ This map assigns approved requirement families to planned implementation boundar
 | REQ-WEB-* | `apps/web/` | M9 | API-backed scan state, filters, evidence metadata, source ranges, caveat, and accessible keyboard flow implemented |
 | REQ-BEN-*, REQ-NFR-002 | `opencode_core.benchmarking`, `scripts/run_benchmarks.py`, `tests/benchmarks/` | M10 | reproducible manifest validation, category metrics, raw samples, environment, observed/target separation implemented; scale targets remain explicitly unevaluated on small corpus |
 | REQ-SEC-*, REQ-OBS-* | ingestion settings/scanner, API middleware/admission, service containers and Compose | M11 | total-byte/request/active-scan bounds, default source suppression, safe request telemetry and headers, non-root read-only restricted containers, and internal backend network implemented |
-| REQ-ENG-*, REQ-RPT-* | `packages/core/src/opencode_core/detection/`, result aggregation | M6/M12 | common interface/result schema and lexical detectors implemented; structural/semantic aggregation pending |
-| REQ-T3-* | `packages/core/src/opencode_core/structural/` | M12 | planned structural engine |
+| REQ-ENG-*, REQ-RPT-* | detection model, lexical/structural engines, engine aggregation | M6/M12 | common interface/result schema, lexical and structural detectors, stable cross-engine deduplication implemented; semantic engine pending M13 |
+| REQ-T3-* | `opencode_core.structural`, AST node adapter output, CLI/API/worker integration | M12 | `struct-v1` MinHash/LSH retrieval, AST/token verification, conservative reorder evidence, and observed labeled evaluation implemented |
 | REQ-T4-* | `packages/core/src/opencode_core/semantic/` | M13/M14 | planned experimental retrieval then multi-evidence verification |
 | REQ-EVL-* | `tests/benchmarks/`, versioned evaluation manifests | M10/M12/M13/M14 | planned per-category evaluation |
 

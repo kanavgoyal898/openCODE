@@ -110,7 +110,7 @@ def test_partial_strict_usage_and_input_exit_codes(
     capsys.readouterr()
 
     with pytest.raises(SystemExit) as invalid_type:
-        main(["find-clones", str(root), "--type", "3"])
+        main(["find-clones", str(root), "--type", "4"])
     assert invalid_type.value.code == 2
     with pytest.raises(SystemExit) as missing:
         main(["scan", str(tmp_path / "missing")])
@@ -128,3 +128,20 @@ def test_help_and_invalid_benchmark_runs(
     with pytest.raises(SystemExit) as invalid_runs:
         main(["benchmark", str(tmp_path), "--runs", "0"])
     assert invalid_runs.value.code == 2
+
+
+def test_find_clones_supports_structural_mode(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root = tmp_path / "structural"
+    root.mkdir()
+    (root / "base.py").write_text(
+        Path("tests/benchmarks/corpus/m12-structural-v1/base.py").read_text()
+    )
+    (root / "near.py").write_text(
+        Path("tests/benchmarks/corpus/m12-structural-v1/insert_delete.py").read_text()
+    )
+
+    assert main(["find-clones", str(root), "--type", "3", "--format", "json"]) == 0
+    report = json.loads(capsys.readouterr().out)
+    assert report["result"]["matches"][0]["category"] == "type3"

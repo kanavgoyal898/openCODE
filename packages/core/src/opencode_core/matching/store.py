@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from opencode_core.fingerprinting import FingerprintSet
 from opencode_core.normalization import NormalizedToken
+from opencode_core.parsers.model import StructuralNode
 
 
 @dataclass(frozen=True, slots=True)
@@ -17,6 +18,7 @@ class FragmentRecord:
     renamed_tokens: tuple[NormalizedToken, ...]
     exact_fingerprints: FingerprintSet
     renamed_fingerprints: FingerprintSet
+    structural_nodes: tuple[StructuralNode, ...] = ()
 
 
 class InMemoryFragmentStore:

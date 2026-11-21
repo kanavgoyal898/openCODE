@@ -1,4 +1,4 @@
-# ADR-006: Production Security Boundaries
+# ADR-007: Production Security Boundaries
 
 ## Status
 
