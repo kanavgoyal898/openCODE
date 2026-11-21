@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
+from opencode_core.config import CoreSettings
 from opencode_core.parsers import ParseCoverageError, default_registry
+from opencode_core.parsers.ingestion import SourceScanner
 from opencode_core.parsers.model import InvalidEncodingError
 
 
@@ -78,3 +82,17 @@ def test_detection_prefers_explicit_language_and_rejects_unknown() -> None:
     assert registry.detect("no-extension", explicit="java").language == "java"
     with pytest.raises(ValueError, match="cannot determine"):
         registry.detect("README")
+
+
+def test_repository_total_byte_quota_stops_before_next_file(tmp_path: Path) -> None:
+    (tmp_path / "a.py").write_text("value = 1\n")
+    (tmp_path / "b.py").write_text("other = 2\n")
+    scanner = SourceScanner(
+        default_registry(),
+        CoreSettings(max_file_bytes=100, max_files=10, max_total_bytes=10),
+    )
+
+    files = list(scanner.scan(tmp_path))
+
+    assert [str(item.path) for item in files] == ["a.py"]
+    assert scanner.diagnostics[-1].code == "BYTE_LIMIT_REACHED"

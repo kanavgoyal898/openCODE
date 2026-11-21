@@ -12,6 +12,7 @@ services:
       retries: 20
     volumes:
       - opencode-postgres:/var/lib/postgresql/data
+    networks: [backend]
   api:
     build:
       context: .
@@ -19,18 +20,30 @@ services:
     environment:
       OPENCODE_DATABASE_URL: postgresql+psycopg://opencode:opencode-local-only@postgres:5432/opencode
     ports: ["8000:8000"]
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=64m"]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 128
     depends_on:
       postgres:
         condition: service_healthy
+    networks: [backend]
   worker:
     build:
       context: .
       dockerfile: apps/worker/Dockerfile
     environment:
       OPENCODE_DATABASE_URL: postgresql+psycopg://opencode:opencode-local-only@postgres:5432/opencode
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=256m"]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 64
     depends_on:
       postgres:
         condition: service_healthy
+    networks: [backend]
   web:
     build:
       context: .
@@ -38,6 +51,16 @@ services:
       args:
         NEXT_PUBLIC_API_BASE_URL: http://localhost:8000/api/v1
     ports: ["3000:3000"]
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=32m", "/app/.next/cache:rw,nosuid,size=32m"]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 128
     depends_on: [api]
+    networks: [frontend]
 volumes:
   opencode-postgres:
+networks:
+  backend:
+    internal: true
+  frontend:

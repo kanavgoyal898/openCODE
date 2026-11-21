@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
+import pytest
 from alembic import command
 from alembic.config import Config
 from fastapi.testclient import TestClient
@@ -14,6 +16,7 @@ from opencode_api.models import (
     FileRevisionModel,
     FingerprintPostingModel,
     RepositoryModel,
+    ScanJobModel,
     SourceFileModel,
 )
 from sqlalchemy import Engine, create_engine, func, select
@@ -39,7 +42,9 @@ def _client(tmp_path: Path, token: str | None = None) -> tuple[TestClient, Engin
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
-    app = create_app(engine=engine, allowed_roots=(tmp_path,), hosted_token=token)
+    app = create_app(
+        engine=engine, allowed_roots=(tmp_path,), hosted_token=token, expose_source=True
+    )
     return TestClient(app), engine
 
 
@@ -141,6 +146,8 @@ def test_contract_errors_auth_health_and_openapi(tmp_path: Path) -> None:
         unauthorized = client.get("/api/v1/repositories")
         assert unauthorized.status_code == 401
         assert unauthorized.json()["error"]["code"] == "UNAUTHORIZED"
+        assert unauthorized.headers["X-Content-Type-Options"] == "nosniff"
+        assert unauthorized.headers["Cache-Control"] == "no-store"
         headers = {"Authorization": "Bearer secret"}
         invalid = client.post(
             "/api/v1/repositories",
@@ -161,6 +168,67 @@ def test_contract_errors_auth_health_and_openapi(tmp_path: Path) -> None:
         openapi = client.get("/openapi.json").json()
         assert openapi["openapi"].startswith("3.1")
         assert "/api/v1/search" in openapi["paths"]
+
+
+def test_security_limits_source_policy_metrics_and_redacted_logs(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    root = _repository(tmp_path)
+    engine = create_engine(
+        "sqlite+pysqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    app = create_app(
+        engine=engine,
+        allowed_roots=(tmp_path,),
+        hosted_token="token",
+        expose_source=False,
+    )
+    headers = {"Authorization": "Bearer token"}
+    caplog.set_level(logging.INFO, logger="opencode.api")
+    with TestClient(app) as client:
+        too_large = client.post(
+            "/api/v1/search",
+            headers={**headers, "Content-Length": "2100001"},
+            content=b"{}",
+        )
+        assert too_large.status_code == 413
+        created = client.post(
+            "/api/v1/repositories",
+            headers=headers,
+            json={"name": "secure", "localPath": str(root)},
+        ).json()
+        scan = client.post(
+            "/api/v1/scans", headers=headers, json={"repositoryId": created["id"]}
+        ).json()
+        clone = client.get("/api/v1/clones", headers=headers, params={"scan": scan["id"]}).json()[
+            "items"
+        ][0]
+        detail = client.get(f"/api/v1/clones/{clone['id']}", headers=headers).json()
+        assert "leftSource" not in detail
+        metrics = client.get("/api/v1/metrics", headers=headers).json()
+        assert metrics["total"] >= 5
+        client.get("/api/v1/health?canary=DO_NOT_LOG_ME")
+    assert "DO_NOT_LOG_ME" not in caplog.text
+
+
+def test_active_scan_quota_is_tenant_scoped(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("OPENCODE_MAX_ACTIVE_SCANS", "1")
+    root = _repository(tmp_path)
+    client, engine = _client(tmp_path)
+    with client:
+        repository = client.post(
+            "/api/v1/repositories", json={"name": "quota", "localPath": str(root)}
+        ).json()
+        with Session(engine) as session:
+            session.add(ScanJobModel(repository_id=repository["id"], status="queued"))
+            session.commit()
+        response = client.post("/api/v1/scans", json={"repositoryId": repository["id"]})
+        assert response.status_code == 429
+        assert response.json()["error"]["code"] == "SCAN_QUOTA_EXCEEDED"
 
 
 def test_uuid7_and_hash_mapping_boundaries() -> None:
