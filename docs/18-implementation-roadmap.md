@@ -27,4 +27,5 @@ Acceptance for M0–M11 is [MVP criteria](../specs/acceptance-criteria.md). M12 
 | M0 | complete | Python 3.12 verification: Ruff and mypy clean; 7 pytest tests passed with 100% core coverage; sdist/wheel built; documentation validation passed |
 | M1 | complete | Python 3.12 verification: four pinned tree-sitter adapters and bounded scanner; 19 tests passed; 92.51% core coverage; Ruff/mypy/build/docs checks passed |
 | M2 | complete | Python 3.12 verification: norm-v1 exact/renamed streams; 26 tests passed; 90.96% core coverage; Ruff/mypy/build/docs checks passed |
-| M3–M12 | not started | Must proceed in dependency order |
+| M3 | complete | Python 3.12 verification: fp-v1 vectors/rolling/Winnowing/SMALL/version checks; 35 tests passed; 91.80% core coverage; Ruff/mypy/build/docs checks passed |
+| M4–M12 | not started | Must proceed in dependency order |
