@@ -47,6 +47,9 @@ class Token:
     start_column: int
     end_line: int
     end_column: int
+    role: str | None = None
+    scope_id: str = "module"
+    subtype: str | None = None
 
     def __post_init__(self) -> None:
         if self.start_byte < 0 or self.end_byte <= self.start_byte:

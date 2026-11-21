@@ -27,6 +27,17 @@ _IDENTIFIER_MARKERS = ("identifier",)
 _BOOLEAN_TEXT = {"true", "false", "True", "False"}
 _NULL_TEXT = {"null", "None", "undefined"}
 _PUNCTUATION = frozenset("()[]{}.,:;")
+_SCOPE_TYPES = {
+    "arrow_function",
+    "class_declaration",
+    "class_definition",
+    "function_declaration",
+    "function_definition",
+    "generator_function_declaration",
+    "lambda",
+    "method_declaration",
+    "method_definition",
+}
 
 
 def _line_starts(source: bytes) -> tuple[int, ...]:
@@ -101,6 +112,34 @@ def _kind(node: Node, text: str) -> TokenKind:
     return "other"
 
 
+def _scope_nodes(root: Node) -> dict[tuple[int, int, str], str]:
+    scopes: list[Node] = []
+    stack = [root]
+    while stack:
+        node = stack.pop()
+        if node.type in _SCOPE_TYPES:
+            scopes.append(node)
+        stack.extend(reversed(node.children))
+    return {
+        (node.start_byte, node.end_byte, node.type): f"scope-{index}"
+        for index, node in enumerate(scopes)
+    }
+
+
+def _identifier_metadata(
+    node: Node, source: bytes, scopes: dict[tuple[int, int, str], str]
+) -> tuple[str, str]:
+    prefix = source[max(0, node.start_byte - 8) : node.start_byte].rstrip()
+    role = "member" if prefix.endswith(b".") else "local"
+    parent = node.parent
+    while parent is not None:
+        key = (parent.start_byte, parent.end_byte, parent.type)
+        if key in scopes:
+            return role, scopes[key]
+        parent = parent.parent
+    return role, "module"
+
+
 @dataclass(frozen=True, slots=True)
 class TreeSitterAdapter:
     language: str
@@ -131,15 +170,22 @@ class TreeSitterAdapter:
             )
 
         starts = _line_starts(payload)
+        scopes = _scope_nodes(tree.root_node)
         tokens: list[Token] = []
         for node in _token_nodes(tree.root_node):
             raw = payload[node.start_byte : node.end_byte]
             text = raw.decode("utf-8")
             start_line, start_column = _coordinate(payload, starts, node.start_byte)
             end_line, end_column = _coordinate(payload, starts, node.end_byte)
+            kind = _kind(node, text)
+            role, scope_id = (
+                _identifier_metadata(node, payload, scopes)
+                if kind == "identifier"
+                else (None, "module")
+            )
             tokens.append(
                 Token(
-                    kind=_kind(node, text),
+                    kind=kind,
                     canonical=text,
                     start_byte=node.start_byte + bom_bytes,
                     end_byte=node.end_byte + bom_bytes,
@@ -147,6 +193,9 @@ class TreeSitterAdapter:
                     start_column=start_column,
                     end_line=end_line,
                     end_column=end_column,
+                    role=role,
+                    scope_id=scope_id,
+                    subtype=node.type,
                 )
             )
         return TokenizationResult(
