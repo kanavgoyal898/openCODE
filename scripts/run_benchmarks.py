@@ -22,6 +22,7 @@ def main() -> None:
     parser.add_argument("--repetitions", type=int, default=5)
     parser.add_argument("--warmups", type=int, default=1)
     parser.add_argument("--seed", type=int, default=20261122)
+    parser.add_argument("--categories", default="type1,type2")
     args = parser.parse_args()
     write_report(
         run_benchmark(
@@ -30,6 +31,7 @@ def main() -> None:
             repetitions=args.repetitions,
             warmups=args.warmups,
             seed=args.seed,
+            categories=tuple(args.categories.split(",")),
         ),
         args.output,
     )

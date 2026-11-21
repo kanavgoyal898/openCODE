@@ -15,6 +15,7 @@ from opencode_core.parsers.adapters import AdapterRegistry
 from opencode_core.parsers.model import (
     InvalidEncodingError,
     ParseCoverageError,
+    StructuralNode,
     Token,
     TokenizationResult,
     TokenKind,
@@ -89,6 +90,24 @@ def _token_nodes(root: Node) -> Iterator[Node]:
                 yield node
             continue
         stack.extend(reversed(node.children))
+
+
+def _structural_nodes(root: Node, byte_offset: int) -> tuple[StructuralNode, ...]:
+    result: list[StructuralNode] = []
+    stack = [(root, 0)]
+    while stack:
+        node, depth = stack.pop()
+        if node.is_named and node.type.casefold() not in _COMMENT_TYPES and node.child_count:
+            result.append(
+                StructuralNode(
+                    node.type,
+                    node.start_byte + byte_offset,
+                    node.end_byte + byte_offset,
+                    depth,
+                )
+            )
+        stack.extend((child, depth + 1) for child in reversed(node.children))
+    return tuple(result)
 
 
 def _kind(node: Node, text: str) -> TokenKind:
@@ -205,6 +224,7 @@ class TreeSitterAdapter:
             degraded=bool(errors),
             error_count=len(errors),
             lexical_coverage=coverage,
+            structural_nodes=_structural_nodes(tree.root_node, bom_bytes),
         )
 
 

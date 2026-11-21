@@ -36,6 +36,7 @@ def _confusion(
     predicted: set[tuple[str, str]],
     universe: set[tuple[str, str]],
 ) -> dict[str, float | int]:
+    predicted = predicted & universe
     tp = len(expected & predicted)
     fp = len(predicted - expected)
     fn = len(expected - predicted)
@@ -61,6 +62,7 @@ def run_benchmark(
     repetitions: int = 5,
     warmups: int = 1,
     seed: int = 20261122,
+    categories: tuple[str, ...] = ("type1", "type2"),
 ) -> dict[str, Any]:
     if repetitions < 1 or warmups < 0:
         raise ValueError("repetitions must be positive and warmups non-negative")
@@ -74,16 +76,16 @@ def run_benchmark(
         if _sha256(path) != item["sha256"]:
             raise ValueError(f"corpus checksum mismatch: {path.name}")
     for _ in range(warmups):
-        find_clones(analyze_directory(corpus))
+        find_clones(analyze_directory(corpus), categories)
     samples: list[dict[str, float | int]] = []
-    predicted: dict[str, set[tuple[str, str]]] = {"type1": set(), "type2": set()}
+    predicted: dict[str, set[tuple[str, str]]] = {kind: set() for kind in categories}
     tracemalloc.start()
     for _ in range(repetitions):
         started = time.perf_counter()
         workspace = analyze_directory(corpus)
         scan_seconds = time.perf_counter() - started
         started = time.perf_counter()
-        matches = find_clones(workspace)
+        matches = find_clones(workspace, categories)
         search_seconds = time.perf_counter() - started
         for match in matches:
             predicted[match.category].add(_pair(match.left.fragment_id, match.right.fragment_id))
@@ -99,9 +101,10 @@ def run_benchmark(
         )
     _, peak = tracemalloc.get_traced_memory()
     tracemalloc.stop()
+    metric_categories = tuple(kind for kind in ("type1", "type2", "type3") if kind in categories)
     labels = {
         kind: {_pair(*pair) for pair in manifest["labels"].get(kind, [])}
-        for kind in ("type1", "type2")
+        for kind in metric_categories
     }
     universe = {_pair(*pair) for pair in manifest["evaluatedPairs"]}
     scan_times = [float(item["scanSeconds"]) for item in samples]
@@ -123,9 +126,10 @@ def run_benchmark(
             **_confusion(labels[kind], predicted[kind], universe),
             "candidateRecall": _confusion(labels[kind], predicted[kind], universe)["recall"],
         }
-        for kind in ("type1", "type2")
+        for kind in metric_categories
     }
-    metrics["type3"] = {"status": "not-implemented", "observed": False}
+    if "type3" not in categories:
+        metrics["type3"] = {"status": "not-implemented", "observed": False}
     metrics["type4Candidate"] = {"status": "not-implemented", "observed": False}
     metrics["type4Verified"] = {"status": "not-implemented", "observed": False}
     throughput = statistics.median(kloc / value for value in scan_times)

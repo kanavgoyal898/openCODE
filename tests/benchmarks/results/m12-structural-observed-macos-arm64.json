@@ -1,0 +1,123 @@
+{
+  "environment": {
+    "implementation": "CPython",
+    "machine": "arm64",
+    "os": "macOS-27.2.1-arm64-arm-64bit",
+    "python": "3.12.0"
+  },
+  "manifest": {
+    "files": [
+      {
+        "path": "base.py",
+        "sha256": "8f072827d00f927cf1fd6cfcb0339881a163a821bb9a3dd34febb28c269d21bf"
+      },
+      {
+        "path": "dependent.py",
+        "sha256": "2866a89dbc4abb0590a35f9c6ebb2c576f7f926d96adcd995f2648b9ffdd4c89"
+      },
+      {
+        "path": "insert_delete.py",
+        "sha256": "6d586189f7c0efbdbbb3428d90334f6ac5b8dfa4abd0ffdc9cfe10daca1abd3b"
+      },
+      {
+        "path": "modified.py",
+        "sha256": "6e5908a53d600747d7349755e35398caad7edd04d732d644d0f6818a3b49664d"
+      },
+      {
+        "path": "reordered.py",
+        "sha256": "550c9eef6c4f5f0b0f34ef478ca16b8dd8e20420a57ad528a5245b9b8c39d0f9"
+      },
+      {
+        "path": "unrelated.py",
+        "sha256": "099ad4ba8a91c28d59cc17d0c1c23a2c770d4060ed7b59d5f0bc57e6618923f0"
+      }
+    ],
+    "id": "m12-structural-v1",
+    "sha256": "8017d0c2a7c6734f11900939144533a429c72715eee47856e857daf6c450bd58"
+  },
+  "metricsByCategory": {
+    "type3": {
+      "candidateRecall": 1.0,
+      "f1": 1.0,
+      "falseNegatives": 0,
+      "falsePositiveRate": 0.0,
+      "falsePositives": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "trueNegatives": 2,
+      "truePositives": 3
+    },
+    "type4Candidate": {
+      "observed": false,
+      "status": "not-implemented"
+    },
+    "type4Verified": {
+      "observed": false,
+      "status": "not-implemented"
+    }
+  },
+  "observed": true,
+  "performance": {
+    "peakMemoryBytes": 391967,
+    "scanThroughputKlocPerSecondMedian": 3.0718632362551452,
+    "searchLatencySecondsP50": 0.02652595899417065,
+    "searchLatencySecondsP95": 0.026924041005258914,
+    "searchLatencySecondsP99": 0.026924041005258914,
+    "serializedIndexBytes": 3129,
+    "serializedIndexBytesPerKloc": 68021.73913043478
+  },
+  "protocol": {
+    "repetitions": 5,
+    "seed": 20261122,
+    "warmups": 1
+  },
+  "samples": [
+    {
+      "files": 6,
+      "lines": 46,
+      "matches": 7,
+      "scanSeconds": 0.013801541004795581,
+      "searchSeconds": 0.02624254100373946
+    },
+    {
+      "files": 6,
+      "lines": 46,
+      "matches": 7,
+      "scanSeconds": 0.015044084000692237,
+      "searchSeconds": 0.026601167002809234
+    },
+    {
+      "files": 6,
+      "lines": 46,
+      "matches": 7,
+      "scanSeconds": 0.01466525000432739,
+      "searchSeconds": 0.02652595899417065
+    },
+    {
+      "files": 6,
+      "lines": 46,
+      "matches": 7,
+      "scanSeconds": 0.0150447920022998,
+      "searchSeconds": 0.026924041005258914
+    },
+    {
+      "files": 6,
+      "lines": 46,
+      "matches": 7,
+      "scanSeconds": 0.014974624995375052,
+      "searchSeconds": 0.026438832996063866
+    }
+  ],
+  "schemaVersion": "benchmark-v1",
+  "targets": {
+    "applicability": "Targets require the specified scale; this small corpus is observed but not a target pass/fail run.",
+    "peakMemoryBytesMaximumAt100Kloc": 262144000,
+    "scanThroughputKlocPerSecondMinimum": 20.0,
+    "searchLatencySecondsP95MaximumAt10MPostings": 2.0
+  },
+  "versions": {
+    "fingerprint": "fp-v1",
+    "normalization": "norm-v1",
+    "package": "0.1.0.dev0"
+  }
+}

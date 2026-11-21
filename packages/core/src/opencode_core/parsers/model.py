@@ -66,6 +66,15 @@ class TokenizationResult:
     degraded: bool
     error_count: int
     lexical_coverage: float
+    structural_nodes: tuple[StructuralNode, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class StructuralNode:
+    kind: str
+    start_byte: int
+    end_byte: int
+    depth: int
 
 
 @dataclass(frozen=True, slots=True)
