@@ -34,3 +34,13 @@ python -m build
 ```
 
 Copy `.env.example` to `.env` only for local overrides; `.env` is ignored and must never be committed.
+
+The standalone M7 CLI is available after installation:
+
+```console
+opencode scan ./repository
+opencode find-clones ./repository --format json
+opencode compare file1.py file2.py --json
+opencode stats ./repository
+opencode benchmark ./repository --runs 3
+```
