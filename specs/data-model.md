@@ -16,7 +16,7 @@ PostgreSQL is the system of record. IDs are UUIDv7; timestamps are UTC `timestam
 | `clone_matches` | `id`, `clone_group_id`, left/right fragment and ranges, scores | canonical left ID < right ID; range indexes | cascade |
 | `match_evidence` | `id`, `clone_match_id`, `kind`, `version`, `payload_json` | index match/kind | cascade |
 
-`hash_u64` is stored as `numeric(20,0)` or signed `bigint` with explicit unsigned conversion; the chosen representation is fixed by migration before M4. JSON payloads are schema-versioned and bounded.
+`hash_u64` is stored as signed `bigint` using the reversible order-preserving sign-bit transform fixed by ADR-005 and the initial migration. JSON payloads are schema-versioned and bounded.
 
 ## Transaction boundaries
 

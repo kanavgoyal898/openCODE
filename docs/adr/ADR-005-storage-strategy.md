@@ -1,6 +1,6 @@
 # ADR-005: Storage Strategy
 
-- Status: Accepted with one implementation choice deferred to M4
+- Status: Accepted; hash representation resolved at M8
 - Date: 2026-11-22
 
 ## Context
@@ -11,11 +11,11 @@ Metadata, revisions, positional postings, scans, matches, and evidence need tran
 
 Use PostgreSQL as relational system of record and a restricted encrypted blob abstraction for optional source bytes. Replace derived data atomically per file revision; use foreign keys/cascades and a deletion outbox for blobs. Apply forward-only expand/contract migrations and restore-tested backups.
 
-Before the M4 schema freezes, benchmark two lossless unsigned-hash representations: `numeric(20,0)` and signed `bigint` with an explicit order-preserving unsigned mapping. Record the selected representation in a migration and update this ADR; no application code may assume one beforehand.
+Store unsigned 64-bit hashes in signed PostgreSQL `BIGINT` through a reversible order-preserving sign-bit transform: XOR the unsigned value with `2^63`, then interpret the bits as two's-complement signed. Equality and ordering use the compact native B-tree type; application boundary functions enforce ranges and reverse the mapping. The initial migration fixes this representation.
 
 ## Consequences
 
-Transactions prevent stale active postings and PostgreSQL simplifies early operations. Posting volume may require bulk copy and later partitioning. Blob deletion is eventually completed but query visibility ends immediately. The bounded deferred hash representation is tracked as RSK-011.
+Transactions prevent stale active postings and PostgreSQL simplifies early operations. Posting volume may require bulk copy and later partitioning. Blob deletion is eventually completed but query visibility ends immediately. The `BIGINT` transform adds explicit conversion at persistence boundaries but avoids variable-width numeric index overhead.
 
 ## Alternatives
 
