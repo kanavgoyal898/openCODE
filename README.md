@@ -23,7 +23,8 @@ Python 3.12 or newer is required. The M0 workspace can be verified without any d
 ```console
 python -m venv .venv
 . .venv/bin/activate
-python -m pip install -e '.[dev]'
+python -m pip install -r requirements.lock
+python -m pip install --no-deps -e .
 ruff check .
 mypy
 pytest --cov

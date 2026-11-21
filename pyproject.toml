@@ -17,7 +17,13 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Typing :: Typed",
 ]
-dependencies = []
+dependencies = [
+  "tree-sitter==0.26.1",
+  "tree-sitter-java==0.23.5",
+  "tree-sitter-javascript==0.25.0",
+  "tree-sitter-python==0.25.0",
+  "tree-sitter-typescript==0.23.2",
+]
 
 [project.optional-dependencies]
 dev = [

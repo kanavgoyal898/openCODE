@@ -4,8 +4,8 @@ This map assigns approved requirement families to planned implementation boundar
 
 | Requirements | Owning paths | Milestone | Current status |
 |---|---|---:|---|
-| REQ-ING-* | `packages/core/src/opencode_core/parsers/`, future application ingestion service | M1/M8 | planned |
-| REQ-LNG-* | `packages/core/src/opencode_core/parsers/` | M1 | planned |
+| REQ-ING-* | `packages/core/src/opencode_core/parsers/`, future application ingestion service | M1/M8 | local safe scanning implemented; repository identity deferred to M8 |
+| REQ-LNG-* | `packages/core/src/opencode_core/parsers/` | M1 | four pinned tree-sitter adapters implemented |
 | REQ-NRM-* | `packages/core/src/opencode_core/normalization/` | M2 | planned |
 | REQ-FPR-*, REQ-NFR-001 | `packages/core/src/opencode_core/fingerprinting/` | M3 | planned |
 | REQ-IDX-* | `packages/core/src/opencode_core/indexing/`, future PostgreSQL adapter | M4/M8 | planned |
