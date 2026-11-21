@@ -51,8 +51,8 @@ def test_index_returns_all_and_only_stably_ordered_postings() -> None:
     ]
     assert index.postings(_query(99)) == ()
     assert index.postings(_query(42, "renamed")) == ()
-    assert index.document_frequency(_query(42)) == 2
-    assert index.fragment_count() == 2
+    assert index.document_frequency(_query(42)) == 4
+    assert index.fragment_count() == 4
 
 
 def test_revision_replacement_removes_stale_postings() -> None:

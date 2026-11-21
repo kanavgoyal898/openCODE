@@ -9,7 +9,7 @@ This map assigns approved requirement families to planned implementation boundar
 | REQ-NRM-* | `packages/core/src/opencode_core/normalization/` | M2 | norm-v1 exact and renamed streams implemented |
 | REQ-FPR-*, REQ-NFR-001 | `packages/core/src/opencode_core/fingerprinting/` | M3 | fp-v1 rolling hash, Winnowing, SMALL, and compatibility checks implemented |
 | REQ-IDX-* | `packages/core/src/opencode_core/indexing/`, future PostgreSQL adapter | M4/M8 | atomic in-memory index implemented; PostgreSQL adapter deferred to M8 |
-| REQ-RET-* | `packages/core/src/opencode_core/retrieval/` | M5 | planned |
+| REQ-RET-* | `packages/core/src/opencode_core/retrieval/` | M5 | bounded retrieval, stop-fingerprint policy, and positional evidence implemented |
 | REQ-VRF-*, REQ-CLS-*, REQ-SCR-* | `packages/core/src/opencode_core/matching/`, `classification/` | M6 | planned |
 | REQ-CLI-* | `packages/cli/` | M7 | planned |
 | REQ-API-* | `apps/api/`, `apps/worker/` | M8 | planned |
