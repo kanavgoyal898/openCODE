@@ -19,3 +19,5 @@ The complete one-row-per-requirement mapping is maintained in [requirements.md](
 | REQ-EXT-* | [architecture](architecture.md) | TC-EXT-* | future gate | M12 |
 
 Changes to a requirement must update its row, referenced contract, tests, and acceptance gate in the same change. Orphan tests may exist only when labeled regression or exploratory.
+
+Planned source ownership and implementation status are tracked in [implementation-map.md](implementation-map.md).

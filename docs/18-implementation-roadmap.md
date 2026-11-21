@@ -19,3 +19,10 @@ Each milestone requires its referenced specifications, tests, review, and update
 | M12 | M6 | `core/structural` AST extension | REQ-EXT-001; TC-EXT | versioned experimental results remain distinct |
 
 Acceptance for M0–M11 is [MVP criteria](../specs/acceptance-criteria.md). M12 is future and cannot delay the lexical MVP. A milestone does not close with disabled tests, undocumented contract drift, or unresolved high-severity defects.
+
+## Milestone status
+
+| Milestone | Status | Evidence |
+|---:|---|---|
+| M0 | complete | Python 3.12 verification: Ruff and mypy clean; 7 pytest tests passed with 100% core coverage; sdist/wheel built; documentation validation passed |
+| M1–M12 | not started | Must proceed in dependency order |
