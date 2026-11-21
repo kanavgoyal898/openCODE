@@ -14,5 +14,6 @@ COPY --from=build /app/package.json /app/package-lock.json ./
 RUN npm ci --omit=dev
 COPY --from=build /app/.next ./.next
 COPY --from=build /app/public ./public
+USER 65532:65532
 EXPOSE 3000
 CMD ["npm", "run", "start"]

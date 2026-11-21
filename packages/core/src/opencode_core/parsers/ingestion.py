@@ -19,7 +19,7 @@ class SourceScanner:
         exclude_patterns: tuple[str, ...] = (),
     ) -> None:
         self.registry = registry
-        self.settings = CoreSettings() if settings is None else settings
+        self.settings = CoreSettings.from_environment() if settings is None else settings
         self.exclude_patterns = exclude_patterns
         self.diagnostics: list[Diagnostic] = []
 
@@ -29,6 +29,7 @@ class SourceScanner:
             raise NotADirectoryError(root)
         self.diagnostics.clear()
         accepted = 0
+        accepted_bytes = 0
         for current, directories, files in os.walk(root, topdown=True, followlinks=False):
             current_path = Path(current)
             depth = len(current_path.relative_to(root).parts)
@@ -59,11 +60,15 @@ class SourceScanner:
                 if accepted >= self.settings.max_files:
                     self._diagnose(relative, "FILE_LIMIT_REACHED", "repository file limit reached")
                     return
+                if accepted_bytes + stat.st_size > self.settings.max_total_bytes:
+                    self._diagnose(relative, "BYTE_LIMIT_REACHED", "repository byte limit reached")
+                    return
                 content = path.read_bytes()
                 if b"\x00" in content[:8192]:
                     self._diagnose(relative, "BINARY_FILE", "binary file was skipped")
                     continue
                 accepted += 1
+                accepted_bytes += len(content)
                 yield SourceFile(str(root), relative, adapter.language, content)
 
     def _allow_directory(self, root: Path, path: Path, depth: int) -> bool:

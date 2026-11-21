@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import base64
+import json
+import logging
 import os
 import tempfile
+import time
 import uuid
 from collections.abc import AsyncIterator, Callable, Iterator
 from contextlib import asynccontextmanager
@@ -21,7 +24,7 @@ from fastapi.responses import JSONResponse
 from opencode_core.engine import compare_files
 from opencode_core.parsers import SourceScanner, default_registry
 from opencode_worker.tasks import process_scan
-from sqlalchemy import Engine, select, text
+from sqlalchemy import Engine, func, select, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -57,6 +60,9 @@ class ApiError(Exception):
         self.status = status
         self.code = code
         self.message = message
+
+
+LOGGER = logging.getLogger("opencode.api")
 
 
 def _redact_url(value: str) -> str:
@@ -112,6 +118,7 @@ def create_app(
     engine: Engine | None = None,
     allowed_roots: tuple[Path, ...] | None = None,
     hosted_token: str | None = None,
+    expose_source: bool | None = None,
     initialize_schema: bool = True,
 ) -> FastAPI:
     database = engine or build_engine(
@@ -120,6 +127,15 @@ def create_app(
     enable_sqlite_foreign_keys(database)
     factory = build_session_factory(database)
     roots = tuple(root.resolve() for root in (allowed_roots or (Path.cwd(),)))
+    source_access = (
+        os.environ.get("OPENCODE_EXPOSE_SOURCE", "false").lower() == "true"
+        if expose_source is None
+        else expose_source
+    )
+    max_body_bytes = int(os.environ.get("OPENCODE_MAX_REQUEST_BYTES", "2100000"))
+    max_active_scans = int(os.environ.get("OPENCODE_MAX_ACTIVE_SCANS", "10"))
+    if max_body_bytes <= 0 or max_active_scans <= 0:
+        raise ValueError("API resource limits must be positive")
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
@@ -140,6 +156,7 @@ def create_app(
     )
     app.state.engine = database
     app.state.session_factory = factory
+    app.state.request_counts = {"total": 0, "errors": 0}
 
     def session() -> Iterator[Session]:
         yield from session_dependency(factory)
@@ -150,10 +167,44 @@ def create_app(
 
     @app.middleware("http")
     async def request_id(request: Request, call_next: Callable[[Request], Any]) -> Any:
+        started = time.perf_counter()
         identifier = request.headers.get("X-Request-Id") or str(uuid.uuid4())
         request.state.request_id = identifier
-        response = await call_next(request)
+        length = request.headers.get("content-length")
+        if length is not None and int(length) > max_body_bytes:
+            response = JSONResponse(
+                status_code=413,
+                content={
+                    "error": {
+                        "code": "PAYLOAD_TOO_LARGE",
+                        "message": "request body exceeds configured limit",
+                        "requestId": identifier,
+                    }
+                },
+            )
+        else:
+            response = await call_next(request)
         response.headers["X-Request-Id"] = identifier
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
+        response.headers["Cache-Control"] = "no-store"
+        app.state.request_counts["total"] += 1
+        if response.status_code >= 400:
+            app.state.request_counts["errors"] += 1
+        LOGGER.info(
+            json.dumps(
+                {
+                    "event": "http_request",
+                    "requestId": identifier,
+                    "method": request.method,
+                    "path": request.url.path,
+                    "status": response.status_code,
+                    "elapsedMs": round((time.perf_counter() - started) * 1000, 3),
+                },
+                separators=(",", ":"),
+            )
+        )
         return response
 
     @app.exception_handler(ApiError)
@@ -303,6 +354,16 @@ def create_app(
         repository = db.get(RepositoryModel, payload.repository_id)
         if repository is None:
             raise ApiError(404, "REPOSITORY_NOT_FOUND", "repository was not found")
+        active = db.scalar(
+            select(func.count())
+            .select_from(ScanJobModel)
+            .where(
+                ScanJobModel.tenant_id == "local",
+                ScanJobModel.status.in_(("queued", "running")),
+            )
+        )
+        if active is not None and active >= max_active_scans:
+            raise ApiError(429, "SCAN_QUOTA_EXCEEDED", "active scan quota exceeded")
         model = ScanJobModel(
             repository_id=repository.id,
             idempotency_key=idempotency_key,
@@ -360,15 +421,17 @@ def create_app(
         repository_model = (
             None if scan_model is None else db.get(RepositoryModel, scan_model.repository_id)
         )
-        if repository_model is not None and repository_model.local_path is not None:
+        if (
+            source_access
+            and repository_model is not None
+            and repository_model.local_path is not None
+        ):
             root = Path(repository_model.local_path).resolve()
             for side in ("left", "right"):
                 relative = Path(payload[side]["fragment_id"])
                 source = (root / relative).resolve()
                 if source.is_relative_to(root) and source.is_file():
-                    payload[f"{side}Source"] = source.read_text(
-                        encoding="utf-8", errors="replace"
-                    )
+                    payload[f"{side}Source"] = source.read_text(encoding="utf-8", errors="replace")
         return payload
 
     @app.post("/api/v1/search", response_model=SearchResult, dependencies=[Depends(authorize)])
@@ -412,6 +475,10 @@ def create_app(
             except Exception:
                 return JSONResponse(status_code=503, content={"status": "not_ready"})
         return Health(status="ok")
+
+    @app.get("/api/v1/metrics", dependencies=[Depends(authorize)])
+    def metrics() -> dict[str, int]:
+        return dict(app.state.request_counts)
 
     return app
 

@@ -9,6 +9,7 @@ from os import environ
 DEFAULT_MAX_FILE_BYTES = 2_000_000
 DEFAULT_MAX_DIRECTORY_DEPTH = 32
 DEFAULT_MAX_FILES = 100_000
+DEFAULT_MAX_TOTAL_BYTES = 250_000_000
 
 
 class ConfigurationError(ValueError):
@@ -35,6 +36,7 @@ class CoreSettings:
     max_file_bytes: int = DEFAULT_MAX_FILE_BYTES
     max_directory_depth: int = DEFAULT_MAX_DIRECTORY_DEPTH
     max_files: int = DEFAULT_MAX_FILES
+    max_total_bytes: int = DEFAULT_MAX_TOTAL_BYTES
 
     @classmethod
     def from_environment(cls, values: Mapping[str, str] | None = None) -> CoreSettings:
@@ -47,4 +49,7 @@ class CoreSettings:
                 source, "OPENCODE_MAX_DIRECTORY_DEPTH", DEFAULT_MAX_DIRECTORY_DEPTH
             ),
             max_files=_positive_integer(source, "OPENCODE_MAX_FILES", DEFAULT_MAX_FILES),
+            max_total_bytes=_positive_integer(
+                source, "OPENCODE_MAX_TOTAL_BYTES", DEFAULT_MAX_TOTAL_BYTES
+            ),
         )
