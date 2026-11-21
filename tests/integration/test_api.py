@@ -112,6 +112,17 @@ def test_repository_scan_clone_and_delete_lifecycle(tmp_path: Path) -> None:
         assert semantic_items[0]["category"] == "type4"
         assert semantic_items[0]["evidence_state"] == "candidate"
 
+        verified_scan = client.post(
+            "/api/v1/scans",
+            headers={"Idempotency-Key": "semantic-verified-scan"},
+            json={"repositoryId": repository["id"], "modes": ["semantic-verified"]},
+        ).json()
+        verified_items = client.get(
+            "/api/v1/clones", params={"scan": verified_scan["id"], "type": "type4"}
+        ).json()["items"]
+        assert verified_items[0]["evidence_state"] == "verified"
+        assert verified_items[0]["algorithm_version"].startswith("semantic-v2:")
+
         (root / "two.py").write_text("value = 1\n", encoding="utf-8")
         second_scan = client.post(
             "/api/v1/scans",

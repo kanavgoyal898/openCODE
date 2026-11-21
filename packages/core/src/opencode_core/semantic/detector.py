@@ -17,6 +17,7 @@ from opencode_core.detection import (
     SourceRange,
 )
 from opencode_core.matching.store import FragmentRecord, InMemoryFragmentStore
+from opencode_core.semantic.analysis import compare_program_evidence
 from opencode_core.version import NORMALIZATION_VERSION
 
 SEMANTIC_VERSION = "semantic-v1"
@@ -125,30 +126,63 @@ class SemanticCloneDetector:
             if cosine < self.config.semantic_threshold:
                 continue
             candidate = self.store.get_by_fragment_id(fragment_id)
+            program = compare_program_evidence(query, candidate)
+            verified = (
+                self.config.semantic_verification
+                and program.supported
+                and program.cfg_similarity >= self.config.program_analysis_threshold
+                and program.data_flow_similarity >= self.config.program_analysis_threshold
+                and program.pdg_similarity >= self.config.program_analysis_threshold
+            )
             limitations = [
                 "EMBEDDING_SIMILARITY_IS_NOT_SEMANTIC_EQUIVALENCE",
-                "CANDIDATE_REQUIRES_MULTI_EVIDENCE_VERIFICATION",
                 "NOT_PLAGIARISM_PROOF",
             ]
+            if not verified:
+                limitations.append("CANDIDATE_REQUIRES_MULTI_EVIDENCE_VERIFICATION")
+            if not program.supported:
+                limitations.append("UNSUPPORTED_DYNAMIC_OR_IO_CONSTRUCT")
             if query_truncated or candidate_truncated:
                 limitations.append("EMBEDDING_INPUT_TRUNCATED")
             results.append(
                 DetectionResult(
                     "type4",
-                    "candidate",
+                    "verified" if verified else "candidate",
                     self.detector_id,
-                    f"{self.algorithm_version}:{self.model.model_id}:{self.model.checksum}",
+                    f"{'semantic-v2' if verified else self.algorithm_version}:"
+                    f"{self.model.model_id}:{self.model.checksum}",
                     NORMALIZATION_VERSION,
                     _range(query),
                     _range(candidate),
-                    SimilarityScores(None, 0.0, 0.0, 0.0, embedding_cosine=cosine),
+                    SimilarityScores(
+                        None,
+                        0.0,
+                        0.0,
+                        0.0,
+                        embedding_cosine=cosine,
+                        cfg_similarity=program.cfg_similarity,
+                        data_flow_similarity=program.data_flow_similarity,
+                        pdg_similarity=program.pdg_similarity,
+                    ),
                     MatchEvidence(
                         (),
                         0,
                         len(query.renamed_tokens),
                         0,
                         len(candidate.renamed_tokens),
-                        ("CODE_EMBEDDING_COSINE_CANDIDATE", "EXACT_VECTOR_SEARCH"),
+                        (
+                            "CODE_EMBEDDING_COSINE_CANDIDATE",
+                            "EXACT_VECTOR_SEARCH",
+                            *(
+                                (
+                                    "CFG_SHAPE_AGREEMENT",
+                                    "DEF_USE_GRAPH_AGREEMENT",
+                                    "PDG_FEATURE_AGREEMENT",
+                                )
+                                if verified
+                                else ()
+                            ),
+                        ),
                     ),
                     tuple(limitations),
                 )

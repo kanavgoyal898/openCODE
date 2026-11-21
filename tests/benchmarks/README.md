@@ -10,4 +10,6 @@ The checked-in synthetic corpus has a license, seed, labels, evaluated negatives
 
 M12 uses the same runner with `--corpus tests/benchmarks/corpus/m12-structural-v1 --manifest tests/benchmarks/corpus/m12-structural-v1/manifest.json --categories type3` and persists its observed structural report separately.
 
-M13 similarly selects `m13-semantic-v1` with `--categories type4`. Its output is explicitly `type4Candidate`; `type4Verified` remains unobserved until M14.
+M13 similarly selects `m13-semantic-v1` with `--categories type4`. Its output is explicitly `type4Candidate`.
+
+M14 selects `m14-verified-v1` with `--categories type4 --semantic-verification`. The report retains the candidate confusion matrix and adds a separate `type4Verified` matrix so embedding false positives cannot be hidden by the promotion policy.

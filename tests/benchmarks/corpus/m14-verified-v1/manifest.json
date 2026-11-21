@@ -1,0 +1,21 @@
+{
+  "id": "m14-verified-v1",
+  "license": "CC0-1.0 synthetic fixtures authored for openCODE",
+  "generator": "hand-authored cross-language verification and adversarial pairs",
+  "seed": 20261122,
+  "files": [
+    {"path": "dynamic.py", "sha256": "2b81dceb6ba02712c3dd0ca621bf80d1d0163863e001b39b9c7ecb67aaa5c137"},
+    {"path": "hard_negative.py", "sha256": "e371993a990e299258eb204907a4dca4aef07ed8f768a0cba9613dbd69c9c553"},
+    {"path": "sum.js", "sha256": "538de585f5ebc99761ce4158fb7a8fc1a3f799773e55e28ac95d15bad2257497"},
+    {"path": "sum.py", "sha256": "0e6b8df8e4684f5ab559785fdb9344fca178bbb71293e8aa28205452b70c5944"}
+  ],
+  "labels": {
+    "type4": [["sum.js", "sum.py"]],
+    "type4Verified": [["sum.js", "sum.py"]]
+  },
+  "evaluatedPairs": [
+    ["sum.js", "sum.py"],
+    ["dynamic.py", "sum.py"],
+    ["hard_negative.py", "sum.py"]
+  ]
+}

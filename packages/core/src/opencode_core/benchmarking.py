@@ -13,6 +13,7 @@ import tracemalloc
 from pathlib import Path
 from typing import Any
 
+from opencode_core.detection import DetectorConfig
 from opencode_core.engine import analyze_directory, find_clones
 from opencode_core.version import FINGERPRINT_VERSION, NORMALIZATION_VERSION, PACKAGE_VERSION
 
@@ -63,6 +64,7 @@ def run_benchmark(
     warmups: int = 1,
     seed: int = 20261122,
     categories: tuple[str, ...] = ("type1", "type2"),
+    semantic_verification: bool = False,
 ) -> dict[str, Any]:
     if repetitions < 1 or warmups < 0:
         raise ValueError("repetitions must be positive and warmups non-negative")
@@ -76,19 +78,30 @@ def run_benchmark(
         if _sha256(path) != item["sha256"]:
             raise ValueError(f"corpus checksum mismatch: {path.name}")
     for _ in range(warmups):
-        find_clones(analyze_directory(corpus), categories)
+        find_clones(
+            analyze_directory(corpus),
+            categories,
+            detector_config=DetectorConfig(semantic_verification=semantic_verification),
+        )
     samples: list[dict[str, float | int]] = []
     predicted: dict[str, set[tuple[str, str]]] = {kind: set() for kind in categories}
+    verified_type4: set[tuple[str, str]] = set()
     tracemalloc.start()
     for _ in range(repetitions):
         started = time.perf_counter()
         workspace = analyze_directory(corpus)
         scan_seconds = time.perf_counter() - started
         started = time.perf_counter()
-        matches = find_clones(workspace, categories)
+        matches = find_clones(
+            workspace,
+            categories,
+            detector_config=DetectorConfig(semantic_verification=semantic_verification),
+        )
         search_seconds = time.perf_counter() - started
         for match in matches:
             predicted[match.category].add(_pair(match.left.fragment_id, match.right.fragment_id))
+            if match.category == "type4" and match.evidence_state == "verified":
+                verified_type4.add(_pair(match.left.fragment_id, match.right.fragment_id))
         lines = sum(path.read_bytes().count(b"\n") for path in files)
         samples.append(
             {
@@ -134,7 +147,17 @@ def run_benchmark(
         metrics["type3"] = {"status": "not-implemented", "observed": False}
     if "type4" not in categories:
         metrics["type4Candidate"] = {"status": "not-implemented", "observed": False}
-    metrics["type4Verified"] = {"status": "not-implemented", "observed": False}
+    if semantic_verification:
+        verified_labels = {
+            _pair(*pair)
+            for pair in manifest["labels"].get("type4Verified", manifest["labels"].get("type4", []))
+        }
+        metrics["type4Verified"] = {
+            **_confusion(verified_labels, verified_type4, universe),
+            "verificationRecall": _confusion(verified_labels, verified_type4, universe)["recall"],
+        }
+    else:
+        metrics["type4Verified"] = {"status": "not-implemented", "observed": False}
     throughput = statistics.median(kloc / value for value in scan_times)
     return {
         "schemaVersion": "benchmark-v1",
@@ -155,7 +178,12 @@ def run_benchmark(
             "os": platform.platform(),
             "machine": platform.machine(),
         },
-        "protocol": {"seed": seed, "warmups": warmups, "repetitions": repetitions},
+        "protocol": {
+            "seed": seed,
+            "warmups": warmups,
+            "repetitions": repetitions,
+            "semanticVerification": semantic_verification,
+        },
         "samples": samples,
         "metricsByCategory": metrics,
         "performance": {

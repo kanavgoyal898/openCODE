@@ -115,9 +115,14 @@ def find_clones(
     workspace: AnalysisWorkspace,
     categories: tuple[str, ...] = ("type1", "type2"),
     minimum_tokens: int = 28,
+    detector_config: DetectorConfig | None = None,
 ) -> tuple[DetectionResult, ...]:
     retriever = CandidateRetriever(workspace.index)
-    config = DetectorConfig(minimum_tokens=minimum_tokens)
+    config = (
+        DetectorConfig(minimum_tokens=minimum_tokens)
+        if detector_config is None
+        else detector_config
+    )
     detectors: list[CloneDetector] = []
     if "type1" in categories:
         detectors.append(ExactCloneDetector(retriever, workspace.store, config))

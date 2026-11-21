@@ -22,6 +22,7 @@ from opencode_api.models import (
     SourceFileModel,
     utc_now,
 )
+from opencode_core.detection import DetectorConfig
 from opencode_core.engine import analyze_directory, find_clones
 from opencode_core.version import FINGERPRINT_VERSION, NORMALIZATION_VERSION
 from sqlalchemy import delete, select
@@ -140,10 +141,17 @@ def _persist_workspace(session: Session, repository: RepositoryModel, scan: Scan
             ("renamed", "type2"),
             ("structural", "type3"),
             ("semantic", "type4"),
+            ("semantic-verified", "type4"),
         )
         if mode in scan.modes_json
     )
-    matches = find_clones(workspace, categories)
+    matches = find_clones(
+        workspace,
+        categories,
+        detector_config=DetectorConfig(
+            semantic_verification="semantic-verified" in scan.modes_json
+        ),
+    )
     for result in matches:
         payload = asdict(result)
         payload["left"]["repository_id"] = repository.id

@@ -7,12 +7,18 @@ import pytest
 from opencode_core.benchmarking import run_benchmark, write_report
 
 CORPUS = Path("tests/benchmarks/corpus/m10-synthetic-v1")
+VERIFIED_CORPUS = Path("tests/benchmarks/corpus/m14-verified-v1")
 
 
 def test_reproducible_manifest_metrics_and_observed_targets(tmp_path: Path) -> None:
     report = run_benchmark(CORPUS, CORPUS / "manifest.json", repetitions=2, warmups=1)
     assert report["observed"] is True
-    assert report["protocol"] == {"seed": 20261122, "warmups": 1, "repetitions": 2}
+    assert report["protocol"] == {
+        "seed": 20261122,
+        "warmups": 1,
+        "repetitions": 2,
+        "semanticVerification": False,
+    }
     assert report["metricsByCategory"]["type1"]["recall"] == 1
     assert report["metricsByCategory"]["type2"]["recall"] == 1
     assert report["metricsByCategory"]["type4Candidate"]["observed"] is False
@@ -20,6 +26,21 @@ def test_reproducible_manifest_metrics_and_observed_targets(tmp_path: Path) -> N
     output = tmp_path / "report.json"
     write_report(report, output)
     assert json.loads(output.read_text())["manifest"]["id"] == "m10-synthetic-v1"
+
+
+def test_semantic_verification_metrics_are_reported_separately() -> None:
+    report = run_benchmark(
+        VERIFIED_CORPUS,
+        VERIFIED_CORPUS / "manifest.json",
+        repetitions=1,
+        warmups=0,
+        categories=("type4",),
+        semantic_verification=True,
+    )
+
+    assert report["metricsByCategory"]["type4Candidate"]["recall"] == 1
+    assert report["metricsByCategory"]["type4Verified"]["precision"] == 1
+    assert report["metricsByCategory"]["type4Verified"]["recall"] == 1
 
 
 def test_checksum_and_protocol_validation(tmp_path: Path) -> None:
