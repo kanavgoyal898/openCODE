@@ -34,11 +34,14 @@ dev = [
   "ruff>=0.8,<1",
 ]
 
+[project.scripts]
+opencode = "opencode_cli.main:main"
+
 [tool.setuptools]
-package-dir = { "" = "packages/core/src" }
+package-dir = { "" = "packages/core/src", "opencode_cli" = "packages/cli/src/opencode_cli" }
 
 [tool.setuptools.packages.find]
-where = ["packages/core/src"]
+where = ["packages/core/src", "packages/cli/src"]
 
 [tool.pytest.ini_options]
 addopts = "--strict-config --strict-markers -ra"
@@ -55,7 +58,8 @@ select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["packages/core/src", "scripts", "tests"]
+files = ["packages/core/src", "packages/cli/src", "scripts", "tests"]
+mypy_path = ["packages/core/src", "packages/cli/src"]
 
 [tool.coverage.run]
 branch = true

@@ -11,7 +11,7 @@ This map assigns approved requirement families to planned implementation boundar
 | REQ-IDX-* | `packages/core/src/opencode_core/indexing/`, future PostgreSQL adapter | M4/M8 | atomic in-memory index implemented; PostgreSQL adapter deferred to M8 |
 | REQ-RET-* | `packages/core/src/opencode_core/retrieval/` | M5 | bounded retrieval, stop-fingerprint policy, and positional evidence implemented |
 | REQ-VRF-*, REQ-CLS-*, REQ-SCR-* | `packages/core/src/opencode_core/matching/`, `detection/` | M6 | Type 1/2 verification, source mapping, classification, scores, and common results implemented |
-| REQ-CLI-* | `packages/cli/` | M7 | planned |
+| REQ-CLI-* | `packages/cli/`, `opencode_core.engine` | M7 | five standalone commands, JSON/SARIF, help, errors, and exit codes implemented |
 | REQ-API-* | `apps/api/`, `apps/worker/` | M8 | planned |
 | REQ-WEB-* | `apps/web/` | M9 | planned |
 | REQ-BEN-*, REQ-NFR-002 | `tests/benchmarks/` | M10 | planned |
