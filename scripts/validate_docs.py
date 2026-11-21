@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 LINK = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
-REQUIREMENT = re.compile(r"^\| (REQ-[A-Z]+-[0-9]{3}) \|", re.MULTILINE)
+REQUIREMENT = re.compile(r"^\| (REQ-[A-Z0-9]+-[0-9]{3}) \|", re.MULTILINE)
 
 REQUIRED = (
     "README.md",
@@ -26,11 +26,13 @@ REQUIRED = (
         "technology-stack", "fingerprinting-strategy", "indexing-strategy",
         "parser-strategy", "storage-strategy",
     ), start=1)),
+    "docs/adr/ADR-006-pluggable-clone-engines.md",
     *(f"specs/{name}.md" for name in (
         "requirements", "architecture", "algorithm-contracts", "language-adapters",
         "data-model", "api-contracts", "cli-contracts", "test-cases",
         "acceptance-criteria", "traceability-matrix",
     )),
+    "specs/detection-engines.md",
 )
 
 

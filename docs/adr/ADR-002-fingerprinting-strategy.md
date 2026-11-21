@@ -17,4 +17,4 @@ Shared normalized regions of at least 28 tokens receive the documented condition
 
 ## Alternatives
 
-File SHA-256 is retained for identity but lacks edit tolerance. MinHash/LSH loses positional guarantees; AST/PDG and embeddings add parser/model complexity and different evidence semantics. They may become independent versioned retrievers, never silent replacements. Full details: [algorithm contracts](../../specs/algorithm-contracts.md).
+File SHA-256 is retained for identity but lacks edit tolerance. MinHash/LSH, AST/PDG, and embeddings have different evidence semantics and are therefore implemented as independent versioned structural/semantic engines under [ADR-006](ADR-006-pluggable-clone-engines.md), never silent replacements. Full lexical details: [algorithm contracts](../../specs/algorithm-contracts.md).

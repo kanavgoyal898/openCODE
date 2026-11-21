@@ -22,10 +22,18 @@ type Scan = {id: string; repositoryId: string; status: "queued"|"running"|"compl
   algorithmVersion: "fp-v1"; normalizationVersion: "norm-v1"; counts: Record<string,number>; createdAt: string; completedAt?: string};
 type SearchRequest = {repositoryIds: string[]; code: string; language: "python"|"javascript"|"typescript"|"java";
   mode?: "exact"|"renamed"; limit?: number};
-type Evidence = {kind: "fingerprint"|"token"; version: string; fingerprintJaccard: number|null;
-  queryCoverage: number; candidateCoverage: number; confidence: null};
+type SourceRange = {repositoryId:string; fileRevisionId:string; path:string;
+  startByte:number; endByte:number; startLine:number; startColumn:number; endLine:number; endColumn:number};
+type Evidence = {kind: "fingerprint"|"token"|"ast"|"embedding"|"control_flow"|"data_flow"|"pdg"|"behavioral";
+  version: string; scores: Record<string,number|null>; explanationCodes: string[]; limitations: string[]};
+type CloneResult = {category: "type1"|"type2"|"type3"|"type4";
+  evidenceState: "verified"|"candidate"|"rejected"; detectorId: string; algorithmVersion: string;
+  threshold: Record<string,number>; left: SourceRange; right: SourceRange; evidence: Evidence[];
+  confidence: null|{value:number; calibrationDataset:string; calibrationVersion:string}};
 type ApiError = {error: {code: string; message: string; requestId: string; details?: Record<string,unknown>}};
 type Page<T> = {items: T[]; nextCursor: string|null};
 ```
 
 Local paths are permitted only for the trusted single-user deployment and must be server-allowlisted. Remote credentials are references, never returned. Cursors are opaque, signed, and bind filters/order. Default order is creation time then ID. Unknown fields are rejected on writes. OpenAPI 3.1 generated from these schemas must pass lint and contract tests.
+
+Type 4 embedding-only results must use `evidenceState="candidate"`. APIs must not expose a verified semantic result unless its evidence satisfies the approved multi-evidence policy in [detection-engines.md](detection-engines.md).

@@ -25,5 +25,6 @@ flowchart LR
 | credential/log leakage | credential references, URL redaction, structured allowlisted logging | TC-SEC-008, TC-OBS-001 |
 | source retention leak | encryption, least privilege, TTL, auditable deletion, no raw-source telemetry | TC-SEC-009/010 |
 | stored XSS | contextual escaping, CSP, source as text, no HTML interpretation | web security test |
+| optional behavioral verification escapes | disabled by default; explicit authorization; disposable no-network sandbox; read-only inputs; syscall/CPU/memory/PID/time/output limits | TC-T4-008..010 |
 
-Residual risks include parser zero-days, collision-based denial of service, poisoned benchmark corpora, and administrator access. Production requires dependency scanning, signed artifacts, incident response, backup protection, and periodic threat-model review. Similarity output must not be presented as a legal judgment.
+Residual risks include parser zero-days, sandbox/runtime zero-days, collision-based denial of service, poisoned models/corpora, and administrator access. Normal scanning and Types 1–3 never execute analyzed source. Optional Phase 4 behavioral verification is a separate explicitly authorized service and cannot be enabled implicitly by repository contents. Production requires dependency/model scanning, signed artifacts, incident response, backup protection, and periodic threat-model review. Similarity output must not be presented as a legal judgment.
