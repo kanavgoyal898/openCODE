@@ -16,9 +16,11 @@ Each milestone requires its referenced specifications, tests, review, and update
 | M9 | M8 | `web` | API and acceptance; TC-WEB | accessible evidence/filter workflows pass |
 | M10 | M6–M9 | `benchmark`, corpora manifests | test-cases; TC-BEN/NFR | reproducible observed report produced |
 | M11 | M8–M10 | sandbox, quotas, telemetry, deployment | security/NFR; TC-SEC/OBS | threat controls and production gates pass |
-| M12 | M6 | `core/structural` AST extension | REQ-EXT-001; TC-EXT | versioned experimental results remain distinct |
+| M12 | M6/M10 | `core/detection`, `core/structural`, AST/MinHash/LSH/alignment, unified aggregation | detection-engines; TC-ENG/T3/RPT/EVL | Type 3 verified on held-out data with explanations and separate metrics |
+| M13 | M8/M10/M12 | `core/semantic`, pinned embedding model and vector index | detection-engines; TC-T4-001..005/EVL | experimental Type 4 candidates displayed and stored as candidate-only |
+| M14 | M11/M13 | CFG/data-flow/PDG evidence; optional behavioral sandbox | detection-engines/security; TC-T4-006..010/EVL | approved multi-evidence policy; sandbox tests; verified/candidate distinction |
 
-Acceptance for M0–M11 is [MVP criteria](../specs/acceptance-criteria.md). M12 is future and cannot delay the lexical MVP. A milestone does not close with disabled tests, undocumented contract drift, or unresolved high-severity defects.
+Acceptance for M0–M11 delivers the Phase 1 lexical product and supporting platform. M12 delivers Phase 2 Type 3, M13 delivers Phase 3 experimental Type 4 retrieval, and M14 delivers Phase 4 multi-evidence Type 4 verification. All are required for complete-project acceptance. Each implementation phase uses a dedicated branch and pull request with tests, evaluation manifest, benchmarks, specification updates, and reviewed evidence. A milestone does not close with disabled tests, undocumented contract drift, invented metrics, or unresolved high-severity defects.
 
 ## Milestone status
 
@@ -28,4 +30,4 @@ Acceptance for M0–M11 is [MVP criteria](../specs/acceptance-criteria.md). M12 
 | M1 | complete | Python 3.12 verification: four pinned tree-sitter adapters and bounded scanner; 19 tests passed; 92.51% core coverage; Ruff/mypy/build/docs checks passed |
 | M2 | complete | Python 3.12 verification: norm-v1 exact/renamed streams; 26 tests passed; 90.96% core coverage; Ruff/mypy/build/docs checks passed |
 | M3 | complete | Python 3.12 verification: fp-v1 vectors/rolling/Winnowing/SMALL/version checks; 35 tests passed; 91.80% core coverage; Ruff/mypy/build/docs checks passed |
-| M4–M12 | not started | Must proceed in dependency order |
+| M4–M14 | not started | Must proceed in dependency order; structural and semantic phases require dedicated pull requests |

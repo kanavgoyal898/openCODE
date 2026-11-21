@@ -12,5 +12,8 @@ The test pyramid emphasizes pure property/golden tests for normalization, hashin
 | interfaces | OpenAPI/JSON/SARIF snapshots | compatibility and error semantics |
 | security | hostile trees, fuzzers, canary secrets | bounded use and no leakage |
 | system | containerized workflows | user journeys and accessibility |
+| structural | synthetic AST edits, dependency-aware reorder fixtures, held-out projects | per-edit-class precision/recall and explanations |
+| semantic | pinned model corpus, syntactically diverse positives, adversarial hard negatives | candidate recall distinct from verified precision/recall |
+| behavioral sandbox | escape, timeout, nondeterminism, I/O, generated input coverage | safe failure and tested-domain limitations |
 
-Fixtures record source/license/checksum; random tests record seed; flaky retries do not count as passes. CI runs unit/contract tests on every change, integration/security subsets on pull requests, and full corpus/benchmarks on scheduled/release builds. Normative cases are in [test-cases.md](../specs/test-cases.md), with gates in [acceptance criteria](../specs/acceptance-criteria.md).
+Fixtures record source/license/checksum; random tests record seed; flaky retries do not count as passes. Datasets are split by repository into development and held-out evaluation sets to reduce leakage, and each clone category is reported separately. CI runs unit/contract tests on every change, integration/security subsets on pull requests, and full corpus/benchmarks on scheduled/release builds. Normative cases are in [test-cases.md](../specs/test-cases.md), with gates in [acceptance criteria](../specs/acceptance-criteria.md).

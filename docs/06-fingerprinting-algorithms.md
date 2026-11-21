@@ -24,4 +24,4 @@ for mode in [exact, renamed]:
   index(version="fp-v1", mode, fingerprints)
 ```
 
-The MVP combination is deterministic, explainable, position-preserving, and efficiently indexable. Cryptographic hashes still identify content/config. Alternatives remain versioned plugins; mixing their scores is forbidden without calibration. Formal math, tie rules, guarantee assumptions, and collision defense are in [algorithm contracts](../specs/algorithm-contracts.md).
+The Phase 1 combination is deterministic, explainable, position-preserving, and efficiently indexable. Type 3 adds language-neutral subtree hashes, weighted MinHash/LSH retrieval, bounded tree alignment, and token local alignment. Type 4 adds a pinned embedding/vector index for candidate discovery, followed by separately versioned control-flow, data-flow, or PDG evidence; embeddings never verify equivalence alone. Formal lexical rules are in [algorithm contracts](../specs/algorithm-contracts.md), and structural/semantic rules are in [detector contracts](../specs/detection-engines.md).

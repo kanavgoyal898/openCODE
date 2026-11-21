@@ -13,3 +13,5 @@ Use two corpora: deterministic synthetic transformations with known clone spans 
 | memory | peak resident set per workload |
 
 Run at least five measured repetitions after one warmup; report median and dispersion, not only the best run. Include cold/warm cache, 1/10/100 KLOC, and 1M/10M postings. Targets from [non-functional requirements](03-non-functional-requirements.md) appear in a separate column from observed values. Failed/truncated runs remain in the report with cause.
+
+Type 1, Type 2, Type 3, Type 4 candidate retrieval, and Type 4 verified results receive separate confusion matrices and retrieval metrics. Type 3 reports each transformation class. Type 4 reports model/index versions, cosine distributions, ANN recall against exact neighbors, hard-negative false positives, and the incremental effect of CFG/data-flow/PDG/behavioral evidence. No benchmark result may be invented or generalized beyond its dataset.

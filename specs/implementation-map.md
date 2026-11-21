@@ -16,6 +16,9 @@ This map assigns approved requirement families to planned implementation boundar
 | REQ-WEB-* | `apps/web/` | M9 | planned |
 | REQ-BEN-*, REQ-NFR-002 | `tests/benchmarks/` | M10 | planned |
 | REQ-SEC-*, REQ-OBS-* | all boundaries; `infrastructure/` | M11 | planned |
-| REQ-EXT-* | core ports and architecture tests | M12 | planned |
+| REQ-ENG-*, REQ-RPT-* | `packages/core/src/opencode_core/detection/`, result aggregation | M6/M12 | planned common interface and unified reporting |
+| REQ-T3-* | `packages/core/src/opencode_core/structural/` | M12 | planned structural engine |
+| REQ-T4-* | `packages/core/src/opencode_core/semantic/` | M13/M14 | planned experimental retrieval then multi-evidence verification |
+| REQ-EVL-* | `tests/benchmarks/`, versioned evaluation manifests | M10/M12/M13/M14 | planned per-category evaluation |
 
 M0 owns `pyproject.toml`, configuration/version primitives, CI, validation scripts, and package/test boundaries. It implements no functional `REQ-*`; its acceptance is the reproducible build skeleton required by [the roadmap](../docs/18-implementation-roadmap.md).

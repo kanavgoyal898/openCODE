@@ -13,4 +13,4 @@ The MVP scans local directories and repository revisions; supports Python, JavaS
 - Say explicitly that similarity is not proof of plagiarism, intent, or ownership.
 - Version adapters, normalization, fingerprints, schemas, and reports.
 
-Type 3 and semantic Type 4 detection, calibrated confidence, and AST/PDG/embedding engines are future work. Success is governed by [formal requirements](../specs/requirements.md) and [acceptance criteria](../specs/acceptance-criteria.md).
+Delivery is phased: the lexical MVP provides Type 1/2; the complete project adds verified structural Type 3 detection, experimental Type 4 retrieval, and multi-evidence Type 4 verification. Embedding similarity is never semantic proof. Success is governed by [formal requirements](../specs/requirements.md), [detector contracts](../specs/detection-engines.md), and [acceptance criteria](../specs/acceptance-criteria.md).

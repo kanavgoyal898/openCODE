@@ -1,6 +1,6 @@
 # Formal Requirements
 
-This file is the normative requirements baseline for openCODE. “Must” denotes an MVP obligation; future items are explicitly marked.
+This file is the normative requirements baseline for openCODE. “Must” denotes a complete-project obligation. Phase 1 is the lexical MVP; Phases 2–4 add required structural and semantic capabilities without weakening evidence standards.
 
 | ID | Requirement | Milestone | Verification | Tests |
 |---|---|---:|---|---|
@@ -27,7 +27,13 @@ This file is the normative requirements baseline for openCODE. “Must” denote
 | REQ-NFR-001 | Identical bytes, configuration, and versions must produce byte-identical ordered outputs across supported platforms. | M3 | reproducibility | TC-NFR-001 |
 | REQ-NFR-002 | Target ≥20 KLOC/s scan throughput per worker, p95 search latency ≤2 s at 10M postings, and ≤250 MiB peak memory per 100 KLOC fixture; these are targets, not measurements. | M10 | benchmark | TC-NFR-002 |
 | REQ-OBS-001 | Emit structured logs, metrics, and trace IDs without source text, secrets, or credential-bearing URLs. | M11 | inspection | TC-OBS-001 |
-| REQ-EXT-001 | Permit future AST, PDG, MinHash/LSH, and embedding engines without changing the core ingestion or result contracts. | M12 | architecture test | TC-EXT-001 |
+| REQ-ENG-001 | Provide independently configurable Exact, Token, Structural, and Semantic detectors behind one versioned interface, with separate retrieval and verification evidence. | M6/M12 | architecture/conformance | TC-ENG-001..004 |
+| REQ-T3-001 | Detect Type 3 candidates using AST structural fingerprints and approximate retrieval, then verify them using token alignment and structural scoring. | M12 | corpus/conformance | TC-T3-001..006 |
+| REQ-T3-002 | Support added, removed, and modified statements, partial structural changes, and conservatively handled reorderings of demonstrably independent statements. | M12 | labeled corpus | TC-T3-002..006 |
+| REQ-T4-001 | Retrieve experimental Type 4 candidates through versioned code embeddings and vector similarity, reporting them as speculative candidates rather than verified equivalence. | M13 | corpus/model card | TC-T4-001..005 |
+| REQ-T4-002 | Improve Type 4 evidence using control/data-flow or program-dependence representations and optional explicitly enabled sandboxed behavioral checks. | M14 | adversarial/sandbox | TC-T4-006..010 |
+| REQ-RPT-001 | Deduplicate results across engines and report clone category, evidence state, source locations, detector/model versions, thresholds, and an explanation of the match. | M12/M13 | schema/contract | TC-RPT-001..004 |
+| REQ-EVL-001 | Measure precision, recall, F1, retrieval recall, false-positive rate, latency, throughput, storage, and memory separately for each clone category on versioned datasets. | M10/M12/M13/M14 | reproducibility | TC-EVL-001..004 |
 
 ## Global acceptance rules
 

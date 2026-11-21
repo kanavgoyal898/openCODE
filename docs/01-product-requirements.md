@@ -11,4 +11,4 @@
 
 The MVP journeys are directory scan, repository ingestion, clone discovery, two-file comparison, snippet search, statistics, and reproducible benchmark. A no-match result is valid. Unsupported/degraded files are visible. Deletion and retention are user-controlled.
 
-The normative requirements, milestone, verification method, and tests are in [requirements.md](../specs/requirements.md). Product release gates are in [acceptance-criteria.md](../specs/acceptance-criteria.md). Out of scope: executing builds, legal/plagiarism judgments, authorship attribution, semantic equivalence, and automatic license conclusions.
+The normative requirements, milestone, verification method, and tests are in [requirements.md](../specs/requirements.md). Product release gates are in [acceptance-criteria.md](../specs/acceptance-criteria.md). The complete project supports all four recognized categories, but Type 4 results distinguish speculative retrieval candidates from multi-evidence verified matches. Out of scope: legal/plagiarism judgments, authorship attribution, universal program-equivalence proofs, and automatic license conclusions.

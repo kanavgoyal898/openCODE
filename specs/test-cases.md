@@ -52,3 +52,20 @@ All fixtures are synthetic or carry a recorded permissive license and checksum. 
 | TC-NFR-002 | 10M-posting benchmark | report all latency/throughput/memory metrics, pass/fail targets |
 | TC-OBS-001 | exercise all failures with canary secrets | no canary in logs/traces/metrics |
 | TC-EXT-001 | in-memory ports with no DB/web imports | fingerprint engine operates independently |
+
+## Structural and semantic engines
+
+| ID | Scenario | Expected result |
+|---|---|---|
+| TC-ENG-001..004 | instantiate each detector through common interface with independent configs | common result schema; no concrete-engine coupling |
+| TC-T3-001 | statement insertion/deletion | verified Type 3 with edit explanation and exact ranges |
+| TC-T3-002 | modified expression | structural/token scores reflect modification |
+| TC-T3-003 | independent statement reorder | reorder evidence accepted only after dependency check |
+| TC-T3-004 | dependent statement reorder | not credited as independent; reject or lower score |
+| TC-T3-005 | partial structural clone and unrelated negative | positive verified; negative rejected |
+| TC-T3-006 | LSH held-out corpus | candidate recall and verification precision/recall reported |
+| TC-T4-001..005 | pinned model determinism, ANN recall, syntactic diversity, hard negatives, truncation | candidate-only results with model evidence and limitations |
+| TC-T4-006..009 | CFG/data-flow/PDG evidence, unsupported constructs, sandbox escape, timeout | promotion only under approved evidence policy; safe failure |
+| TC-T4-010 | behavioral checks over generated inputs | tested-domain evidence recorded; no universal-equivalence claim |
+| TC-RPT-001..004 | cross-engine duplicate, source ranges, versions/thresholds, explanations | one unified result retaining every engine's evidence/state |
+| TC-EVL-001..004 | held-out Type 1–4 evaluation | separate precision/recall/F1/retrieval/performance metrics and manifests |

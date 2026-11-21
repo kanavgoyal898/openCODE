@@ -38,6 +38,13 @@ interface FingerprintIndex { replaceRevision(input: RevisionFingerprintSet): Pro
   postings(query: FingerprintQuery): AsyncIterable<Posting>; deleteRepository(id: string): Promise<void>; }
 interface CandidateRetriever { retrieve(query: QueryFingerprints, policy: RetrievalPolicy): AsyncIterable<Candidate>; }
 interface Verifier { verify(query: NormalizedFragment, candidate: Candidate): Promise<VerifiedMatch[]>; }
+type CloneCategory = "type1" | "type2" | "type3" | "type4";
+type EvidenceState = "verified" | "candidate" | "rejected";
+interface CloneDetector {
+  id: string; algorithmVersion: string; category: CloneCategory;
+  retrieve(query: CodeFragment, config: DetectorConfig): AsyncIterable<DetectionCandidate>;
+  verify(candidate: DetectionCandidate, config: DetectorConfig): Promise<DetectionResult>;
+}
 ```
 
 ## Processing invariants
@@ -48,6 +55,10 @@ interface Verifier { verify(query: NormalizedFragment, candidate: Candidate): Pr
 4. Retrieval is approximate/high-recall; verification alone creates clone matches.
 5. Raw source remains in a restricted blob abstraction and is not required by the index.
 6. Web/API/CLI expose the same application services and result schemas.
+7. `ExactCloneDetector`, `TokenCloneDetector`, `StructuralCloneDetector`, and `SemanticCloneDetector` implement `CloneDetector`; none imports another concrete engine.
+8. Unified aggregation may deduplicate results but never replaces engine-specific scores or promotes `candidate` evidence to `verified`.
+
+Detailed detector contracts and evidence rules are normative in [detection-engines.md](detection-engines.md).
 
 ## Failure semantics
 

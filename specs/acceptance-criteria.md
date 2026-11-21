@@ -2,7 +2,7 @@
 
 ## MVP release gate (M0–M11)
 
-The MVP is acceptable only when all mandatory requirements in [requirements.md](requirements.md) except future `REQ-EXT-001` pass their mapped tests, no critical/high security finding remains, migrations restore from backup, and the reproducibility manifest is published with the release artifact.
+The Phase 1 lexical MVP is acceptable when its Type 1/2 requirements pass. Complete-project acceptance additionally requires the Phase 2–4 gates below. No critical/high security finding may remain, migrations must restore from backup, and every evaluation must publish a reproducibility manifest.
 
 | AC ID | Criterion | Evidence |
 |---|---|---|
@@ -16,5 +16,9 @@ The MVP is acceptable only when all mandatory requirements in [requirements.md](
 | AC-008 | Targets in `REQ-NFR-002` are measured on declared hardware; misses block production release but not an explicitly labeled preview. | TC-NFR-002 |
 | AC-009 | Web evidence is accessible, source ranges are exact, and every result carries the non-plagiarism caveat. | TC-WEB-001..003, TC-VRF-001..005 |
 | AC-010 | All requirement rows have milestone and test mappings, and all normative links validate. | documentation validation script/checklist |
+| AC-011 | Type 3 handles the five required edit classes with held-out precision and recall targets approved before evaluation; approximate retrieval recall is reported separately. | TC-T3-001..006, TC-EVL-003 |
+| AC-012 | Type 4 embedding retrieval is explicitly experimental/candidate-only and publishes model card, dataset, ANN recall, hard-negative behavior, and per-model version. | TC-T4-001..005 |
+| AC-013 | Any verified Type 4 result has at least two approved non-embedding evidence sources; optional behavioral checks pass sandbox escape/resource tests and retain tested-domain limitations. | TC-T4-006..010 |
+| AC-014 | Unified reports deduplicate cross-engine results without erasing evidence, return source locations/explanations, and expose separate metrics per category and evidence state. | TC-RPT-001..004, TC-EVL-001..004 |
 
-Type 3, Type 4, calibrated confidence, AST/PDG/embedding retrieval, and remote multi-tenant production hosting are not MVP acceptance claims unless separately approved and versioned.
+Type 3 and Type 4 are complete-project requirements delivered after the lexical MVP. Type 4 embedding similarity alone is never accepted as verified equivalence. Remote multi-tenant production hosting remains separately gated.
