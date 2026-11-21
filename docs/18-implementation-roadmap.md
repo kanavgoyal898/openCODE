@@ -36,4 +36,5 @@ Acceptance for M0–M11 delivers the Phase 1 lexical product and supporting plat
 | M7 | complete | Python 3.12 verification: five CLI commands and report/exit-code tests; 68 tests passed; 95.08% core coverage; Ruff/mypy/build/wheel/docs checks passed |
 | M8 | complete | Python 3.12 verification: API/worker/schema/migration/rescan/cascade/search/auth tests; 72 tests passed; 90.01% full-package coverage; Ruff/mypy/build/wheel/Compose/docs checks passed |
 | M9 | complete | Next.js evidence console uses live API contracts; typecheck/build and Playwright scan/filter/evidence/keyboard workflow pass; API source-range retrieval and Compose web service verified |
-| M10–M14 | not started | Must proceed in dependency order; structural and semantic phases require dedicated pull requests |
+| M10 | complete | Versioned checksummed synthetic corpus; separate Type 1/2 confusion metrics; explicit later-engine states; five-run observed latency/throughput/memory report with environment and targets separated |
+| M11–M14 | not started | Must proceed in dependency order; structural and semantic phases require dedicated pull requests |

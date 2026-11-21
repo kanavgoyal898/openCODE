@@ -1,0 +1,23 @@
+{
+  "id": "m10-synthetic-v1",
+  "license": "CC0-1.0 synthetic fixtures authored for openCODE",
+  "generator": "hand-authored deterministic transformations",
+  "seed": 20261122,
+  "files": [
+    {"path": "exact_a.py", "sha256": "6eca17bc00fd454e597cb860a489140cb408c1094de60fbb151c300fa450b856"},
+    {"path": "exact_b.py", "sha256": "6eca17bc00fd454e597cb860a489140cb408c1094de60fbb151c300fa450b856"},
+    {"path": "negative.py", "sha256": "a55c14346b5c0e11da873793db175efd28d4840a330a5edba18d03d7d7310626"},
+    {"path": "renamed_a.py", "sha256": "5af567f388b90cc615799786e5120b9d55689faf0cd43be25c0c8086a1b916eb"},
+    {"path": "renamed_b.py", "sha256": "63b572ef9b3e0e02e906dd6085aa702f5834aa4b1767514281d8c1673374c665"}
+  ],
+  "labels": {
+    "type1": [["exact_a.py", "exact_b.py"]],
+    "type2": [["renamed_a.py", "renamed_b.py"]]
+  },
+  "evaluatedPairs": [
+    ["exact_a.py", "exact_b.py"],
+    ["renamed_a.py", "renamed_b.py"],
+    ["exact_a.py", "negative.py"],
+    ["renamed_a.py", "negative.py"]
+  ]
+}

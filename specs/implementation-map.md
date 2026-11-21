@@ -14,7 +14,7 @@ This map assigns approved requirement families to planned implementation boundar
 | REQ-CLI-* | `packages/cli/`, `opencode_core.engine` | M7 | five standalone commands, JSON/SARIF, help, errors, and exit codes implemented |
 | REQ-API-* | `apps/api/`, `apps/worker/` | M8 | FastAPI resources, durable scan jobs, SQLAlchemy schema, Alembic migration, and worker implemented |
 | REQ-WEB-* | `apps/web/` | M9 | API-backed scan state, filters, evidence metadata, source ranges, caveat, and accessible keyboard flow implemented |
-| REQ-BEN-*, REQ-NFR-002 | `tests/benchmarks/` | M10 | planned |
+| REQ-BEN-*, REQ-NFR-002 | `opencode_core.benchmarking`, `scripts/run_benchmarks.py`, `tests/benchmarks/` | M10 | reproducible manifest validation, category metrics, raw samples, environment, observed/target separation implemented; scale targets remain explicitly unevaluated on small corpus |
 | REQ-SEC-*, REQ-OBS-* | all boundaries; `infrastructure/` | M11 | planned |
 | REQ-ENG-*, REQ-RPT-* | `packages/core/src/opencode_core/detection/`, result aggregation | M6/M12 | common interface/result schema and lexical detectors implemented; structural/semantic aggregation pending |
 | REQ-T3-* | `packages/core/src/opencode_core/structural/` | M12 | planned structural engine |
