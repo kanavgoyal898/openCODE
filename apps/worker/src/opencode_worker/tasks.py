@@ -139,6 +139,8 @@ def _persist_workspace(session: Session, repository: RepositoryModel, scan: Scan
     matches = find_clones(workspace, categories)
     for result in matches:
         payload = asdict(result)
+        payload["left"]["repository_id"] = repository.id
+        payload["right"]["repository_id"] = repository.id
         signature = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
         group = CloneGroupModel(
             scan_job_id=scan.id, clone_type=result.category, signature=signature

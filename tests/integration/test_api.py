@@ -87,6 +87,15 @@ def test_repository_scan_clone_and_delete_lifecycle(tmp_path: Path) -> None:
         assert scan["counts"]["files"] == 2
         assert scan["counts"]["clones"] == 1
 
+        clones = client.get("/api/v1/clones", params={"scan": scan_id}).json()
+        assert len(clones["items"]) == 1
+        clone_id = clones["items"][0]["id"]
+        detail = client.get(f"/api/v1/clones/{clone_id}")
+        assert detail.status_code == 200
+        assert detail.json()["evidence_state"] == "verified"
+        assert detail.json()["leftSource"] == _source()
+        assert detail.json()["rightSource"] == _source()
+
         (root / "two.py").write_text("value = 1\n", encoding="utf-8")
         second_scan = client.post(
             "/api/v1/scans",
@@ -99,13 +108,6 @@ def test_repository_scan_clone_and_delete_lifecycle(tmp_path: Path) -> None:
         with Session(engine) as session:
             assert session.scalar(select(func.count()).select_from(SourceFileModel)) == 2
             assert session.scalar(select(func.count()).select_from(FileRevisionModel)) == 2
-
-        clones = client.get("/api/v1/clones", params={"scan": scan_id}).json()
-        assert len(clones["items"]) == 1
-        clone_id = clones["items"][0]["id"]
-        detail = client.get(f"/api/v1/clones/{clone_id}")
-        assert detail.status_code == 200
-        assert detail.json()["evidence_state"] == "verified"
 
         search = client.post(
             "/api/v1/search",

@@ -16,6 +16,7 @@ from urllib.parse import urlsplit, urlunsplit
 from fastapi import BackgroundTasks, Depends, FastAPI, Header, Query, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from opencode_core.engine import compare_files
 from opencode_core.parsers import SourceScanner, default_registry
@@ -127,6 +128,16 @@ def create_app(
         yield
 
     app = FastAPI(title="openCODE API", version="1", lifespan=lifespan)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            item.strip()
+            for item in os.environ.get("OPENCODE_CORS_ORIGINS", "http://localhost:3000").split(",")
+            if item.strip()
+        ],
+        allow_methods=["GET", "POST", "DELETE"],
+        allow_headers=["Authorization", "Content-Type", "Idempotency-Key", "X-Request-Id"],
+    )
     app.state.engine = database
     app.state.session_factory = factory
 
@@ -343,7 +354,22 @@ def create_app(
         model = db.get(CloneMatchModel, clone_id)
         if model is None:
             raise ApiError(404, "CLONE_NOT_FOUND", "clone was not found")
-        return {"id": model.id, **model.payload_json}
+        payload = {"id": model.id, **model.payload_json}
+        group = db.get(CloneGroupModel, model.clone_group_id)
+        scan_model = None if group is None else db.get(ScanJobModel, group.scan_job_id)
+        repository_model = (
+            None if scan_model is None else db.get(RepositoryModel, scan_model.repository_id)
+        )
+        if repository_model is not None and repository_model.local_path is not None:
+            root = Path(repository_model.local_path).resolve()
+            for side in ("left", "right"):
+                relative = Path(payload[side]["fragment_id"])
+                source = (root / relative).resolve()
+                if source.is_relative_to(root) and source.is_file():
+                    payload[f"{side}Source"] = source.read_text(
+                        encoding="utf-8", errors="replace"
+                    )
+        return payload
 
     @app.post("/api/v1/search", response_model=SearchResult, dependencies=[Depends(authorize)])
     def search(payload: SearchRequest, db: Session = Depends(session)) -> SearchResult:
