@@ -57,6 +57,8 @@ class RevisionFingerprintSet:
     def __post_init__(self) -> None:
         if not self.repository_id or not self.revision_id:
             raise ValueError("repository and revision identifiers are required")
-        fragment_ids = [fragment.fragment_id for fragment in self.fragments]
-        if len(fragment_ids) != len(set(fragment_ids)):
-            raise ValueError("fragment identifiers must be unique within a revision")
+        fragment_modes = [
+            (fragment.fragment_id, fragment.fingerprints.mode) for fragment in self.fragments
+        ]
+        if len(fragment_modes) != len(set(fragment_modes)):
+            raise ValueError("fragment and mode pairs must be unique within a revision")
