@@ -18,11 +18,17 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
+  "alembic==1.20.1",
+  "fastapi==0.165.0",
+  "httpx==0.28.1",
+  "psycopg[binary]==3.3.9",
+  "sqlalchemy==2.1.9",
   "tree-sitter==0.26.1",
   "tree-sitter-java==0.23.5",
   "tree-sitter-javascript==0.25.0",
   "tree-sitter-python==0.25.0",
   "tree-sitter-typescript==0.23.2",
+  "uvicorn==0.54.0",
 ]
 
 [project.optional-dependencies]
@@ -38,10 +44,10 @@ dev = [
 opencode = "opencode_cli.main:main"
 
 [tool.setuptools]
-package-dir = { "" = "packages/core/src", "opencode_cli" = "packages/cli/src/opencode_cli" }
+package-dir = { "" = "packages/core/src", "opencode_api" = "apps/api/src/opencode_api", "opencode_cli" = "packages/cli/src/opencode_cli", "opencode_worker" = "apps/worker/src/opencode_worker" }
 
 [tool.setuptools.packages.find]
-where = ["packages/core/src", "packages/cli/src"]
+where = ["packages/core/src", "packages/cli/src", "apps/api/src", "apps/worker/src"]
 
 [tool.pytest.ini_options]
 addopts = "--strict-config --strict-markers -ra"
@@ -55,15 +61,18 @@ line-length = 100
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 
+[tool.ruff.lint.per-file-ignores]
+"apps/api/src/opencode_api/app.py" = ["B008"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["packages/core/src", "packages/cli/src", "scripts", "tests"]
-mypy_path = ["packages/core/src", "packages/cli/src"]
+files = ["packages/core/src", "packages/cli/src", "apps/api/src", "apps/worker/src", "scripts", "tests"]
+mypy_path = ["packages/core/src", "packages/cli/src", "apps/api/src", "apps/worker/src"]
 
 [tool.coverage.run]
 branch = true
-source = ["opencode_core"]
+source = ["opencode_api", "opencode_cli", "opencode_core", "opencode_worker"]
 
 [tool.coverage.report]
 fail_under = 90

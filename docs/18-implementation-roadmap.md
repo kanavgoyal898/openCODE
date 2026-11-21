@@ -34,4 +34,5 @@ Acceptance for M0–M11 delivers the Phase 1 lexical product and supporting plat
 | M5 | complete | Python 3.12 verification: retrieval/stop/SMALL/budget tests; 53 tests passed; 93.60% core coverage; Ruff/mypy/build/docs checks passed |
 | M6 | complete | Python 3.12 verification: Type 1/2 verification/classification/source-map/score tests; 62 tests passed; 95.00% core coverage; Ruff/mypy/build/docs checks passed |
 | M7 | complete | Python 3.12 verification: five CLI commands and report/exit-code tests; 68 tests passed; 95.08% core coverage; Ruff/mypy/build/wheel/docs checks passed |
-| M8–M14 | not started | Must proceed in dependency order; structural and semantic phases require dedicated pull requests |
+| M8 | complete | Python 3.12 verification: API/worker/schema/migration/rescan/cascade/search/auth tests; 72 tests passed; 90.01% full-package coverage; Ruff/mypy/build/wheel/Compose/docs checks passed |
+| M9–M14 | not started | Must proceed in dependency order; structural and semantic phases require dedicated pull requests |

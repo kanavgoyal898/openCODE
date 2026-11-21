@@ -8,11 +8,11 @@ This map assigns approved requirement families to planned implementation boundar
 | REQ-LNG-* | `packages/core/src/opencode_core/parsers/` | M1 | four pinned tree-sitter adapters implemented |
 | REQ-NRM-* | `packages/core/src/opencode_core/normalization/` | M2 | norm-v1 exact and renamed streams implemented |
 | REQ-FPR-*, REQ-NFR-001 | `packages/core/src/opencode_core/fingerprinting/` | M3 | fp-v1 rolling hash, Winnowing, SMALL, and compatibility checks implemented |
-| REQ-IDX-* | `packages/core/src/opencode_core/indexing/`, future PostgreSQL adapter | M4/M8 | atomic in-memory index implemented; PostgreSQL adapter deferred to M8 |
+| REQ-IDX-* | `packages/core/src/opencode_core/indexing/`, `apps/api` relational schema | M4/M8 | atomic in-memory index plus PostgreSQL-compatible fingerprint/posting persistence implemented |
 | REQ-RET-* | `packages/core/src/opencode_core/retrieval/` | M5 | bounded retrieval, stop-fingerprint policy, and positional evidence implemented |
 | REQ-VRF-*, REQ-CLS-*, REQ-SCR-* | `packages/core/src/opencode_core/matching/`, `detection/` | M6 | Type 1/2 verification, source mapping, classification, scores, and common results implemented |
 | REQ-CLI-* | `packages/cli/`, `opencode_core.engine` | M7 | five standalone commands, JSON/SARIF, help, errors, and exit codes implemented |
-| REQ-API-* | `apps/api/`, `apps/worker/` | M8 | planned |
+| REQ-API-* | `apps/api/`, `apps/worker/` | M8 | FastAPI resources, durable scan jobs, SQLAlchemy schema, Alembic migration, and worker implemented |
 | REQ-WEB-* | `apps/web/` | M9 | planned |
 | REQ-BEN-*, REQ-NFR-002 | `tests/benchmarks/` | M10 | planned |
 | REQ-SEC-*, REQ-OBS-* | all boundaries; `infrastructure/` | M11 | planned |

@@ -44,3 +44,15 @@ opencode compare file1.py file2.py --json
 opencode stats ./repository
 opencode benchmark ./repository --runs 3
 ```
+
+## API and worker
+
+Apply the database migration and start the production adapters with:
+
+```console
+alembic upgrade head
+python -m uvicorn opencode_api.app:app --host 0.0.0.0 --port 8000
+python -m opencode_worker
+```
+
+Alternatively, `docker compose up --build` starts PostgreSQL, the API, and the durable scan worker. Local-path repository ingestion is allowlist-bound; source is parsed as untrusted data and is never executed.
