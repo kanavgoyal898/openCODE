@@ -190,6 +190,51 @@ def test_contract_errors_auth_health_and_openapi(tmp_path: Path) -> None:
         openapi = client.get("/openapi.json").json()
         assert openapi["openapi"].startswith("3.1")
         assert "/api/v1/search" in openapi["paths"]
+        assert "/api/v1/compare" in openapi["paths"]
+
+
+def test_compare_ephemeral_snippets_and_no_match(tmp_path: Path) -> None:
+    client, engine = _client(tmp_path)
+    renamed = _source().replace("left", "alpha").replace("right", "beta")
+    with client:
+        exact = client.post(
+            "/api/v1/compare",
+            json={
+                "leftCode": _source(),
+                "rightCode": _source(),
+                "language": "python",
+                "mode": "exact",
+            },
+        )
+        assert exact.status_code == 200
+        assert exact.json()["items"][0]["category"] == "type1"
+
+        renamed_result = client.post(
+            "/api/v1/compare",
+            json={
+                "leftCode": _source(),
+                "rightCode": renamed,
+                "language": "python",
+                "mode": "renamed",
+            },
+        )
+        assert renamed_result.status_code == 200
+        assert renamed_result.json()["items"][0]["category"] == "type2"
+
+        no_match = client.post(
+            "/api/v1/compare",
+            json={
+                "leftCode": _source(),
+                "rightCode": "def unrelated():\n    return None\n",
+                "language": "python",
+            },
+        )
+        assert no_match.status_code == 200
+        assert no_match.json() == {"items": []}
+
+    with Session(engine) as session:
+        assert session.scalar(select(func.count()).select_from(RepositoryModel)) == 0
+        assert session.scalar(select(func.count()).select_from(CloneMatchModel)) == 0
 
 
 def test_security_limits_source_policy_metrics_and_redacted_logs(

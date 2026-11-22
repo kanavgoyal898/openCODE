@@ -44,8 +44,10 @@ All fixtures are synthetic or carry a recorded permissive license and checksum. 
 |---|---|---|
 | TC-CLI-001..006 | each command, JSON, partial, interruption | schema and exit codes match contract |
 | TC-API-001..010 | endpoint success/error/idempotency/pagination/auth | OpenAPI-valid responses and tenant isolation |
+| TC-API-011 | compare two submitted snippets in exact and renamed modes | deterministic verified evidence; input is not persisted; no-match returns an empty successful result |
 | TC-DB-001 | delete repository | no queryable relational/blob-derived data remains |
 | TC-WEB-001..003 | filters/evidence/keyboard and screen reader | correct results, WCAG 2.2 AA critical paths |
+| TC-WEB-004 | compare two snippets at phone, tablet, and desktop widths | accessible inputs and status; stacked narrow layout and side-by-side wide layout; evidence and no-match states are clear |
 | TC-BEN-001 | repeated pinned corpus/seed | report contains reproducibility manifest |
 | TC-BEN-002 | target comparison | measured values labeled observed; targets labeled target |
 | TC-NFR-001 | cross-platform golden run | byte-identical ordered JSON excluding declared timing fields |

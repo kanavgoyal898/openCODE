@@ -13,7 +13,7 @@ export type SourceRange = {
   end_line: number;
 };
 export type CloneMatch = {
-  id: string;
+  id?: string;
   category: "type1" | "type2" | "type3" | "type4";
   evidence_state: "verified" | "candidate" | "rejected";
   detector_id: string;
@@ -26,3 +26,6 @@ export type CloneMatch = {
   evidence: { explanation_codes: string[] };
   limitations: string[];
 };
+
+export type Language = "python" | "javascript" | "typescript" | "java";
+export type CompareMode = "exact" | "renamed";

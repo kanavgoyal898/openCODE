@@ -1,6 +1,6 @@
 # Web application
 
-The M9 Next.js/TypeScript evidence console renders only versioned REST API responses. It registers allowlisted repositories, starts and follows scans, filters clone results, and displays detector/version metadata, explanation codes, limitations, and exact source ranges side by side. The UI deliberately states that similarity is not proof of plagiarism, authorship, or semantic equivalence.
+The M9 Next.js/TypeScript evidence console renders only versioned REST API responses. It compares two ephemeral snippets, registers allowlisted repositories, starts and follows scans, filters clone results, and displays detector/version metadata, explanation codes, limitations, and exact source ranges. The responsive layout stacks code editors on narrow screens and presents them side by side when space permits. The UI deliberately states that similarity is not proof of plagiarism, authorship, or semantic equivalence.
 
 ## Development
 

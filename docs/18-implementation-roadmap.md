@@ -13,7 +13,7 @@ Each milestone requires its referenced specifications, tests, review, and update
 | M6 | M5 | `core/verification`, aggregation | algorithm-contracts; TC-VRF/CLS/SCR | ranges/types/scores/dedup pass |
 | M7 | M6 | `cmd/opencode` | cli-contracts; TC-CLI | five commands and versioned outputs pass |
 | M8 | M4/M6 | `api`, `persistence`, workers | api-contracts, data-model; TC-API/DB | async scans, migrations, auth/idempotency pass |
-| M9 | M8 | `web` | API and acceptance; TC-WEB | accessible evidence/filter workflows pass |
+| M9 | M8 | `web` | API and acceptance; TC-WEB | accessible responsive evidence/filter and direct snippet-comparison workflows pass |
 | M10 | M6–M9 | `benchmark`, corpora manifests | test-cases; TC-BEN/NFR | reproducible observed report produced |
 | M11 | M8–M10 | sandbox, quotas, telemetry, deployment | security/NFR; TC-SEC/OBS | threat controls and production gates pass |
 | M12 | M6/M10 | `core/detection`, `core/structural`, AST/MinHash/LSH/alignment, unified aggregation | detection-engines; TC-ENG/T3/RPT/EVL | Type 3 verified on held-out data with explanations and separate metrics |
@@ -35,7 +35,7 @@ Acceptance for M0–M11 delivers the Phase 1 lexical product and supporting plat
 | M6 | complete | Python 3.12 verification: Type 1/2 verification/classification/source-map/score tests; 62 tests passed; 95.00% core coverage; Ruff/mypy/build/docs checks passed |
 | M7 | complete | Python 3.12 verification: five CLI commands and report/exit-code tests; 68 tests passed; 95.08% core coverage; Ruff/mypy/build/wheel/docs checks passed |
 | M8 | complete | Python 3.12 verification: API/worker/schema/migration/rescan/cascade/search/auth tests; 72 tests passed; 90.01% full-package coverage; Ruff/mypy/build/wheel/Compose/docs checks passed |
-| M9 | complete | Next.js evidence console uses live API contracts; typecheck/build and Playwright scan/filter/evidence/keyboard workflow pass; API source-range retrieval and Compose web service verified |
+| M9 | complete | Next.js evidence console uses live API contracts; responsive scan/filter/evidence and direct snippet comparison workflows pass typecheck/build/Playwright; API source-range retrieval and Compose web service verified |
 | M10 | complete | Versioned checksummed synthetic corpus; separate Type 1/2 confusion metrics; explicit later-engine states; five-run observed latency/throughput/memory report with environment and targets separated |
 | M11 | complete | Central API admission quotas/security headers/source-off policy/safe telemetry; repository total-byte quota; non-root read-only capability-dropped containers on internal backend network; adversarial tests and ADR-007 |
 | M12 | complete | `struct-v1` AST-node shingles, deterministic MinHash/LSH plus bounded recall top-up, AST/token alignment verification, conservative reorder evidence, CLI/API/worker integration, labeled corpus and observed Type 3 metrics |

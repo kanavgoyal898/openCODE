@@ -94,5 +94,16 @@ class SearchResult(ApiModel):
     truncated: bool
 
 
+class CompareRequest(ApiModel):
+    left_code: str = Field(min_length=1, max_length=1_000_000)
+    right_code: str = Field(min_length=1, max_length=1_000_000)
+    language: Literal["python", "javascript", "typescript", "java"]
+    mode: Literal["exact", "renamed"] = "exact"
+
+
+class CompareResult(ApiModel):
+    items: list[dict[str, Any]]
+
+
 class Health(ApiModel):
     status: Literal["ok", "not_ready"]

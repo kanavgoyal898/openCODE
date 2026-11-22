@@ -14,7 +14,7 @@ The Phase 1 lexical MVP is acceptable when its Type 1/2 requirements pass. Compl
 | AC-006 | API and CLI conform exactly to their versioned schemas and no-match is successful. | TC-API-001..010, TC-CLI-001..006 |
 | AC-007 | Security limits, tenant authorization, secret redaction, and source retention pass adversarial tests. | TC-SEC-001..010, threat review |
 | AC-008 | Targets in `REQ-NFR-002` are measured on declared hardware; misses block production release but not an explicitly labeled preview. | TC-NFR-002 |
-| AC-009 | Web evidence is accessible, source ranges are exact, and every result carries the non-plagiarism caveat. | TC-WEB-001..003, TC-VRF-001..005 |
+| AC-009 | Web evidence is responsive and accessible, source ranges are exact, direct snippet comparison works, and every result carries the non-plagiarism caveat. | TC-WEB-001..004, TC-VRF-001..005 |
 | AC-010 | All requirement rows have milestone and test mappings, and all normative links validate. | documentation validation script/checklist |
 | AC-011 | Type 3 handles the five required edit classes with held-out precision and recall targets approved before evaluation; approximate retrieval recall is reported separately. | TC-T3-001..006, TC-EVL-003 |
 | AC-012 | Type 4 embedding retrieval is explicitly experimental/candidate-only and publishes model card, dataset, ANN recall, hard-negative behavior, and per-model version. | TC-T4-001..005 |

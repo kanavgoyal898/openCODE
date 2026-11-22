@@ -43,6 +43,8 @@ from opencode_api.models import (
     ScanJobModel,
 )
 from opencode_api.schemas import (
+    CompareRequest,
+    CompareResult,
     Deletion,
     Health,
     Page,
@@ -466,6 +468,27 @@ def create_app(
                         if len(items) >= payload.limit:
                             return SearchResult(items=items, truncated=True)
         return SearchResult(items=items, truncated=False)
+
+    @app.post(
+        "/api/v1/compare", response_model=CompareResult, dependencies=[Depends(authorize)]
+    )
+    def compare(payload: CompareRequest) -> CompareResult:
+        suffix = {
+            "python": ".py",
+            "javascript": ".js",
+            "typescript": ".ts",
+            "java": ".java",
+        }[payload.language]
+        with tempfile.TemporaryDirectory(prefix="opencode-compare-") as temporary:
+            left_path = Path(temporary) / f"left{suffix}"
+            right_path = Path(temporary) / f"right{suffix}"
+            left_path.write_text(payload.left_code, encoding="utf-8")
+            right_path.write_text(payload.right_code, encoding="utf-8")
+            matches = compare_files(left_path, right_path)
+        category = "type1" if payload.mode == "exact" else "type2"
+        return CompareResult(
+            items=[asdict(match) for match in matches if match.category == category]
+        )
 
     @app.get("/api/v1/health", response_model=Health)
     def health(ready: bool = False, db: Session = Depends(session)) -> Health | JSONResponse:

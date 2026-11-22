@@ -16,6 +16,7 @@ test("scans, filters, and shows accessible evidence from API responses", async (
     if (url.endsWith("/scans/scan")) return route.fulfill({ json: { id: "scan", repositoryId: "repo", status: "completed", counts: { files: 2, clones: 1 } } });
     if (url.includes("/clones?")) return route.fulfill({ json: { items: [match] } });
     if (url.endsWith("/clones/clone-1")) return route.fulfill({ json: { ...match, leftSource: "def same():\n  return 1", rightSource: "def same():\n  return 1" } });
+    if (url.endsWith("/compare")) return route.fulfill({ json: { items: [{ ...match, id: undefined, category: "type2" }] } });
     return route.fulfill({ status: 404, json: {} });
   });
   await page.goto("/");
@@ -26,8 +27,28 @@ test("scans, filters, and shows accessible evidence from API responses", async (
   await expect(page.getByLabel("Selected clone evidence")).toBeVisible();
   await expect(page.getByText("CANONICAL_TOKEN_EQUALITY")).toBeVisible();
   await expect(page.locator(".matched")).toHaveCount(4);
-  await page.getByLabel("Language").selectOption("java");
+  await page.getByLabel("Language", { exact: true }).selectOption("java");
   await expect(page.getByText("No clone results for the active filters.")).toBeVisible();
   await page.keyboard.press("Tab");
   await expect(page.locator(":focus")).toBeVisible();
+});
+
+test("compares two snippets and remains usable on a phone", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.route("http://localhost:8000/api/v1/**", async route => {
+    const url = route.request().url();
+    if (url.endsWith("/repositories")) return route.fulfill({ json: { items: [] } });
+    if (url.endsWith("/compare")) {
+      expect(route.request().postDataJSON()).toMatchObject({ language: "python", mode: "renamed" });
+      return route.fulfill({ json: { items: [{ ...match, id: undefined, category: "type2" }] } });
+    }
+    return route.fulfill({ status: 404, json: {} });
+  });
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Compare two snippets" })).toBeVisible();
+  await page.getByRole("button", { name: "Compare snippets" }).click();
+  await expect(page.getByText("TYPE2 similarity detected")).toBeVisible();
+  await expect(page.getByText("100%")).toBeVisible();
+  const boxes = await Promise.all(["Snippet A", "Snippet B"].map(label => page.getByLabel(label).boundingBox()));
+  expect(boxes[0]?.y).toBeLessThan(boxes[1]?.y ?? 0);
 });

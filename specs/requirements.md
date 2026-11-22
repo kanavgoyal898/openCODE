@@ -19,8 +19,8 @@ This file is the normative requirements baseline for openCODE. “Must” denote
 | REQ-CLS-001 | Classify only verified exact-mode matches as Type 1 and renamed-mode matches as Type 2; never label similarity as plagiarism. | M6 | conformance | TC-CLS-001..003 |
 | REQ-SCR-001 | Report fingerprint containment/Jaccard and verified token coverage separately; confidence is absent until calibrated on a declared dataset. | M6 | schema test | TC-SCR-001 |
 | REQ-CLI-001 | Provide `scan`, `find-clones`, `compare`, `stats`, and `benchmark`, with human and stable JSON output and documented exit codes. | M7 | black-box | TC-CLI-001..006 |
-| REQ-API-001 | Implement the versioned REST resources and schemas in `api-contracts.md`, including pagination, idempotency, and structured errors. | M8 | OpenAPI/contract | TC-API-001..010 |
-| REQ-WEB-001 | Present scan state, clone groups, side-by-side evidence, filters, and explicit non-plagiarism language. | M9 | end-to-end/a11y | TC-WEB-001..003 |
+| REQ-API-001 | Implement the versioned REST resources and schemas in `api-contracts.md`, including pagination, idempotency, structured errors, and direct comparison of two submitted code snippets. | M8/M9 | OpenAPI/contract | TC-API-001..011 |
+| REQ-WEB-001 | Present scan state, clone groups, responsive side-by-side evidence, filters, direct comparison of two code snippets, and explicit non-plagiarism language. | M9 | end-to-end/a11y | TC-WEB-001..004 |
 | REQ-BEN-001 | Run reproducible synthetic and permissively licensed evaluation corpora and distinguish observed metrics from targets. | M10 | reproducibility | TC-BEN-001..002 |
 | REQ-SEC-001 | Reject traversal and unsafe symlinks, binaries, oversized/deep inputs, and enforce CPU/memory/time/quantity limits. | M11 | adversarial | TC-SEC-001..007 |
 | REQ-SEC-002 | Never log repository credentials or raw source; apply configurable retention and authenticated repository authorization. | M11 | security review | TC-SEC-008..010 |

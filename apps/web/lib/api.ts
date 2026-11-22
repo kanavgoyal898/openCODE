@@ -1,4 +1,4 @@
-import type { CloneMatch, Repository, Scan } from "./types";
+import type { CloneMatch, CompareMode, Language, Repository, Scan } from "./types";
 
 const BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1";
 
@@ -24,4 +24,9 @@ export const api = {
   clones: (repositoryId: string, type?: string) =>
     request<{ items: CloneMatch[] }>(`/clones?repository=${encodeURIComponent(repositoryId)}${type ? `&type=${type}` : ""}`),
   clone: (id: string) => request<CloneMatch>(`/clones/${id}`),
+  compare: (leftCode: string, rightCode: string, language: Language, mode: CompareMode) =>
+    request<{ items: CloneMatch[] }>("/compare", {
+      method: "POST",
+      body: JSON.stringify({ leftCode, rightCode, language, mode }),
+    }),
 };
